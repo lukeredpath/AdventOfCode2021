@@ -17,7 +17,7 @@ enum Day01 {
     }
 
     static func calculateSliceTotals(_ input: [Int]) -> [Int] {
-        input.indices.reduce(into: [Int]()) { sliceTotals, index in
+        input.indices.reduce(into: []) { sliceTotals, index in
             guard index + 2 < input.count else { return }
             let slice = input[index...index + 2]
             sliceTotals.append(slice.reduce(0, +))
