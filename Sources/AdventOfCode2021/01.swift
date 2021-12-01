@@ -18,5 +18,16 @@ enum Day01 {
         return increases
     }
 
-    static let run = pipe(parseInput, analyseInput)
+    static func calculateSliceTotals(_ input: [Int]) -> [Int] {
+        var sliceTotals: [Int] = []
+        for index in input.indices {
+            guard index + 2 < input.count else { continue }
+            let slice = input[index...index + 2]
+            sliceTotals.append(slice.reduce(0, +))
+        }
+        return sliceTotals
+    }
+
+    static let partOne = pipe(parseInput, analyseInput)
+    static let partTwo = pipe(parseInput, calculateSliceTotals, analyseInput)
 }
