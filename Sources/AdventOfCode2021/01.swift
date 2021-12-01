@@ -9,10 +9,10 @@ enum Day01 {
     }
 
     static func analyseInput(_ input: [Int]) -> Int {
-        input[1...].indices.reduce(0) { count, index in
-            input[index] > input[index - 1]
-                ? count + 1
-                : count
+        input[1...].indices.reduce(into: 0) { count, index in
+            if input[index] > input[index - 1] {
+                count += 1
+            }
         }
     }
 
