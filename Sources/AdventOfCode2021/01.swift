@@ -9,23 +9,19 @@ enum Day01 {
     }
 
     static func analyseInput(_ input: [Int]) -> Int {
-        var increases = 0
-        for index in input[1...].indices {
-            if input[index] > input[index - 1] {
-                increases += 1
-            }
+        input[1...].indices.reduce(0) { count, index in
+            input[index] > input[index - 1]
+                ? count + 1
+                : count
         }
-        return increases
     }
 
     static func calculateSliceTotals(_ input: [Int]) -> [Int] {
-        var sliceTotals: [Int] = []
-        for index in input.indices {
-            guard index + 2 < input.count else { continue }
+        input.indices.reduce(into: [Int]()) { sliceTotals, index in
+            guard index + 2 < input.count else { return }
             let slice = input[index...index + 2]
             sliceTotals.append(slice.reduce(0, +))
         }
-        return sliceTotals
     }
 
     static let partOne = pipe(parseInput, analyseInput)
