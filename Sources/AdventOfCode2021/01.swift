@@ -3,7 +3,7 @@ import Overture
 
 enum Day01 {
     static func parseInput(lines: String) -> [Int] {
-        return lines
+        lines
             .components(separatedBy: .newlines)
             .compactMap(Int.init)
     }
