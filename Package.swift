@@ -15,7 +15,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/pointfreeco/swift-overture", from: "0.5.0")
+        .package(url: "https://github.com/pointfreeco/swift-overture", from: "0.5.0"),
+        .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.3.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -23,7 +24,8 @@ let package = Package(
         .target(
             name: "AdventOfCode2021",
             dependencies: [
-                .product(name: "Overture", package: "swift-overture")
+                .product(name: "Overture", package: "swift-overture"),
+                .product(name: "Parsing", package: "swift-parsing")
             ]
         ),
         .testTarget(

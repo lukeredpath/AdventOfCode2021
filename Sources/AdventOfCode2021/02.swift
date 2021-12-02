@@ -1,10 +1,11 @@
 import Foundation
 import Overture
+import Parsing
 
 enum Day02 {
     typealias Position = (horizontal: Int, depth: Int)
 
-    enum Movement {
+    enum Movement: Equatable {
         case up(Int)
         case down(Int)
         case forward(Int)
@@ -30,8 +31,30 @@ enum Day02 {
         position.horizontal * position.depth
     }
 
+    static let movementRowParser = Prefix<Substring> { $0 != " " }
+        .skip(" ")
+        .take(Int.parser())
+        .compactMap { (movement, value) -> Movement? in
+            switch movement {
+            case "up":
+                return .up(value)
+            case "down":
+                return .down(value)
+            case "forward":
+                return .forward(value)
+            default:
+                return nil
+            }
+        }
+
+    static let movementsParser = Many(movementRowParser, separator: "\n")
+
     static func parseMovements(input: String) -> [Movement] {
-        []
+        var inputSubstring = input[...]
+        guard let result = movementsParser.parse(&inputSubstring) else {
+            return []
+        }
+        return result
     }
 
     static let startingPosition: Position = (0, 0)

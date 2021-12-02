@@ -34,6 +34,23 @@
             XCTAssertEqual(position.depth, 6)
         }
 
+        func test02_Part1_Parser() throws {
+            var input = "forward 1"[...]
+            let result_1 = try XCTUnwrap(Day02.movementRowParser.parse(&input))
+            XCTAssertEqual("", input)
+            XCTAssertEqual(result_1, .forward(1))
+
+            input = "up 2"[...]
+            let result_2 = try XCTUnwrap(Day02.movementRowParser.parse(&input))
+            XCTAssertEqual("", input)
+            XCTAssertEqual(result_2, .up(2))
+
+            input = "down 3"[...]
+            let result_3 = try XCTUnwrap(Day02.movementRowParser.parse(&input))
+            XCTAssertEqual("", input)
+            XCTAssertEqual(result_3, .down(3))
+        }
+
         func test02_Part1_Solution() {
             let result = Day02.partOne(input_02)
             XCTAssert(result > 0, "Expected final position to be non-zero")
