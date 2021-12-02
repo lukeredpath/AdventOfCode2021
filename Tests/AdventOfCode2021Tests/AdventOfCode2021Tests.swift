@@ -14,10 +14,10 @@
             print("Number of window increases: \(result)")
         }
 
-        func test02_Part1_ExampleCalculation() {
-            var position: Day02.Position = (horizontal: 0, depth: 0)
+        func test02_Part1_ExampleCalculationNoAim() {
+            var position: Day02.Position = (horizontal: 0, depth: 0, aim: 0)
 
-            position = Day02.calculatePosition(
+            position = Day02.calculatePositionNoAim(
                 from: position,
                 movements: [.forward(3), .down(5)]
             )
@@ -25,7 +25,7 @@
             XCTAssertEqual(position.horizontal, 3)
             XCTAssertEqual(position.depth, 5)
 
-            position = Day02.calculatePosition(
+            position = Day02.calculatePositionNoAim(
                 from: position,
                 movements: [.up(1), .forward(5), .down(2)]
             )
@@ -51,9 +51,46 @@
             XCTAssertEqual(result_3, .down(3))
         }
 
+        func test02_Part1_ExampleCalculationWithAim() {
+            var position: Day02.Position = (horizontal: 0, depth: 0, aim: 0)
+
+            position = Day02.calculatePositionWithAim(
+                from: position,
+                movements: [.forward(3)]
+            )
+
+            XCTAssertEqual(position.horizontal, 3)
+            XCTAssertEqual(position.depth, 0)
+            XCTAssertEqual(position.aim, 0)
+
+            position = Day02.calculatePositionWithAim(
+                from: position,
+                movements: [.down(2), .forward(2)]
+            )
+
+            XCTAssertEqual(position.horizontal, 5)
+            XCTAssertEqual(position.depth, 4)
+            XCTAssertEqual(position.aim, 2)
+
+            position = Day02.calculatePositionWithAim(
+                from: position,
+                movements: [.up(1), .down(5), .forward(5)]
+            )
+
+            XCTAssertEqual(position.horizontal, 10)
+            XCTAssertEqual(position.depth, 34)
+            XCTAssertEqual(position.aim, 6)
+        }
+
         func test02_Part1_Solution() {
             let result = Day02.partOne(input_02)
             XCTAssert(result > 0, "Expected final position to be non-zero")
             print("Final position: \(result)")
+        }
+
+        func test02_Part2_Solution() {
+            let result = Day02.partTwo(input_02)
+            XCTAssert(result > 0, "Expected final position to be non-zero")
+            print("Final position (with aim): \(result)")
         }
     }

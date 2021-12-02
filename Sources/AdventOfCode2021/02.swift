@@ -3,7 +3,7 @@ import Overture
 import Parsing
 
 enum Day02 {
-    typealias Position = (horizontal: Int, depth: Int)
+    typealias Position = (horizontal: Int, depth: Int, aim: Int)
 
     enum Movement: Equatable {
         case up(Int)
@@ -11,18 +11,34 @@ enum Day02 {
         case forward(Int)
     }
 
-    static func calculatePosition(
+    static func calculatePositionNoAim(
         from current: Position,
         movements: [Movement]
     ) -> Position {
         movements.reduce(current) { position, movement in
             switch movement {
             case let .up(value):
-                return (position.horizontal, position.depth - value)
+                return (position.horizontal, position.depth - value, 0)
             case let .down(value):
-                return (position.horizontal, position.depth + value)
+                return (position.horizontal, position.depth + value, 0)
             case let .forward(value):
-                return (position.horizontal + value, position.depth)
+                return (position.horizontal + value, position.depth, 0)
+            }
+        }
+    }
+
+    static func calculatePositionWithAim(
+        from current: Position,
+        movements: [Movement]
+    ) -> Position {
+        movements.reduce(current) { position, movement in
+            switch movement {
+            case let .up(value):
+                return (position.horizontal, position.depth, position.aim - value)
+            case let .down(value):
+                return (position.horizontal, position.depth, position.aim + value)
+            case let .forward(value):
+                return (position.horizontal + value, value * position.aim + position.depth, position.aim)
             }
         }
     }
@@ -57,11 +73,17 @@ enum Day02 {
         return result
     }
 
-    static let startingPosition: Position = (0, 0)
+    static let startingPosition: Position = (0, 0, 0)
 
     static let partOne = pipe(
         parseMovements,
-        with(startingPosition, curry(calculatePosition)),
+        with(startingPosition, curry(calculatePositionNoAim)),
+        aggregatePosition
+    )
+
+    static let partTwo = pipe(
+        parseMovements,
+        with(startingPosition, curry(calculatePositionWithAim)),
         aggregatePosition
     )
 }
