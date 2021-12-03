@@ -93,4 +93,30 @@
             XCTAssert(result > 0, "Expected final position to be non-zero")
             print("Final position (with aim): \(result)")
         }
+
+        func test03_Part3_Parsing() throws {
+            var input = "0"[...]
+            let bitZero = try XCTUnwrap(Day03.bitParser.parse(&input))
+            XCTAssertEqual(0, bitZero)
+
+            input = "1"[...]
+            let bitOne = try XCTUnwrap(Day03.bitParser.parse(&input))
+            XCTAssertEqual(1, bitOne)
+
+            input = "2"[...]
+            let notABit = Day03.bitParser.parse(&input)
+            XCTAssertNil(notABit)
+
+            var incompleteRow = "0010"[...]
+            XCTAssertNil(Day03.rowParser.parse(&incompleteRow))
+
+            var rowInput = "00101"[...]
+            let result = try XCTUnwrap(Day03.rowParser.parse(&rowInput))
+            XCTAssertEqual("", rowInput)
+            XCTAssertEqual(result.0, 0)
+            XCTAssertEqual(result.1, 0)
+            XCTAssertEqual(result.2, 1)
+            XCTAssertEqual(result.3, 0)
+            XCTAssertEqual(result.4, 1)
+        }
     }
