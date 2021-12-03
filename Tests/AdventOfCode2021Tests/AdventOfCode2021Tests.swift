@@ -115,12 +115,42 @@
 
             XCTAssertEqual(diagnostic.gamma, 22)
             XCTAssertEqual(diagnostic.epsilon, 9)
-            XCTAssertEqual(Day03.powerConsumption(from: diagnostic), 198)
+            XCTAssertEqual(Day03.calculatePowerConsumption(from: diagnostic), 198)
         }
 
         func test03_Part1_Solution() {
             let result = Day03.partOne(input_03)
             XCTAssert(result > 0, "Expected power consumption to be non-zero")
             print("Power consumption: \(result)")
+        }
+
+        func test03_Part2_ExampleAnalysis() {
+            let exampleBitsInput = """
+            00100
+            11110
+            10110
+            10111
+            10101
+            01111
+            00111
+            11100
+            10000
+            11001
+            00010
+            01010
+            """
+
+            let exampleBits = Day03.parseInput(lines: exampleBitsInput)
+            let oxygenRating = Day03.calculateOxygenGeneratorRating(from: exampleBits)
+            let co2Rating = Day03.calculateCO2ScrubberRating(from: exampleBits)
+
+            XCTAssertEqual(oxygenRating, 23)
+            XCTAssertEqual(co2Rating, 10)
+        }
+
+        func test03_Part2_Solution() {
+            let result = Day03.partTwo(input_03)
+            XCTAssert(result > 0, "Expected life support rating to be non-zero")
+            print("Life support rating: \(result)")
         }
     }
