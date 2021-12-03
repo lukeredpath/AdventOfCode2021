@@ -3,44 +3,55 @@ import Overture
 import Parsing
 
 enum Day03 {
-    typealias Bits = (Int, Int, Int, Int, Int)
-    typealias Diagnostic = (gamma: Bits, epsilon: Bits)
+    typealias Diagnostic = (gamma: Int, epsilon: Int)
 
-    static func intCharacter(matching value: Character) -> AnyParser<Substring, Int> {
-        Prefix<Substring>(1) { $0 == value }
-            .map(String.init)
-            .compactMap { Int($0) }
-            .eraseToAnyParser()
+    static func parseInput(lines: String) -> [String] {
+        lines.components(separatedBy: .newlines)
     }
 
-    static let bitParser = OneOfMany(
-        intCharacter(matching: "0"),
-        intCharacter(matching: "1")
-    )
+    static func analyseReport(_ rows: [String]) -> Diagnostic {
+        guard rows.count > 0 else { return (0, 0) }
 
-    static let rowParser = Many(bitParser, atLeast: 5, atMost: 5)
-        .map { values -> Bits in
-            (values[0], values[1], values[2], values[3], values[4])
+        let gammaBits = (0...rows[0].count-1).map { index -> Character in
+            mostCommonBit(from: rows.map { Array($0)[index] })
         }
+        let gammaBitString = String(gammaBits)
+        let epsilonBitString = inverseBits(from: gammaBitString)
 
-    static let inputParser = Many(rowParser, separator: "\n")
-
-    static func parseInput(lines: String) -> [Bits] {
-        var input = lines[...]
-        guard let result = inputParser.parse(&input) else {
-            fatalError("Could not parse input")
-        }
-        return result
+        return (bitsToInt(gammaBitString), bitsToInt(epsilonBitString))
     }
-//
-//    static func analyseReport(_ rows: [Bits]) -> Diagnostic {
-//        (gamma: (0, 0, 0, 0 ,0), epsilon: (0, 0, 0, 0, 0))
-//    }
-//
-//    static func powerConsumption(from diagnostic: Diagnostic) -> Int {
-//        0
-//    }
-//
-//    // static let partThree = (String) -> Int
-//    static let partOne = pipe(parseInput, analyseReport, powerConsumption)
+
+    static func mostCommonBit(from bitValues: [Character]) -> Character {
+        let totals = bitValues.reduce((0, 0)) { counts, bitValue in
+            if bitValue == "0" {
+                return (counts.0 + 1, counts.1)
+            } else {
+                return (counts.0, counts.1 + 1)
+            }
+        }
+        return totals.0 > totals.1 ? "0" : "1"
+    }
+
+    static func inverseBits(from bitsString: String) -> String {
+        bitsString.reduce(into: "") { inverseBits, character in
+            inverseBits += inverseBit(character)
+        }
+    }
+
+    static func inverseBit(_ bitChar: Character) -> String {
+        bitChar == "0" ? "1" : "0"
+    }
+
+    static func bitsToInt(_ bitString: String) -> Int {
+        guard let int = Int(bitString, radix: 2) else {
+            fatalError("Invalid bit string!")
+        }
+        return int
+    }
+
+    static func powerConsumption(from diagnostic: Diagnostic) -> Int {
+        diagnostic.gamma * diagnostic.epsilon
+    }
+
+    static let partOne = pipe(parseInput, analyseReport, powerConsumption)
 }
