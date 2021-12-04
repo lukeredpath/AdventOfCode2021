@@ -153,4 +153,77 @@
             XCTAssert(result > 0, "Expected life support rating to be non-zero")
             print("Life support rating: \(result)")
         }
+
+        func test04_Part1_BingoCardParser() throws {
+            var exampleCard = """
+            22 13 17 11  0
+             8  2 23  4 24
+            21  9 14 16  7
+             6 10  3 18  5
+             1 12 20 15 19
+            """[...]
+
+            let card: Day04.BingoCard = try XCTUnwrap(
+                Day04.cardParser.parse(&exampleCard.utf8)
+            )
+
+            XCTAssertEqual(card.a.values.map(\.number), [22, 13, 17, 11,  0])
+            XCTAssertEqual(card.b.values.map(\.number), [ 8,  2, 23,  4, 24])
+            XCTAssertEqual(card.c.values.map(\.number), [21,  9, 14, 16,  7])
+            XCTAssertEqual(card.d.values.map(\.number), [ 6, 10,  3, 18,  5])
+            XCTAssertEqual(card.e.values.map(\.number), [ 1, 12, 20, 15, 19])
+
+            var multipleCards = """
+            22 13 17 11  0
+             8  2 23  4 24
+            21  9 14 16  7
+             6 10  3 18  5
+             1 12 20 15 19
+
+            22 13 17 11  0
+             8  2 23  4 24
+            21  9 14 16  7
+             6 10  3 18  5
+             1 12 20 15 19
+            """[...]
+
+            let cards: [Day04.BingoCard] = try XCTUnwrap(
+                Day04.cardsParser.parse(&multipleCards.utf8)
+            )
+
+            XCTAssertEqual(cards.count, 2)
+        }
+
+        func test04_Part1_DrawSequenceParser() throws {
+            var exampleSequence = """
+            1,2,3,4,5
+            """[...]
+
+            let sequence = try XCTUnwrap(Day04.drawParser.parse(&exampleSequence))
+
+            XCTAssertEqual(sequence, [1, 2, 3, 4, 5])
+        }
+
+        func test04_Part1_InputParser() throws {
+            let exampleInput = """
+            1,2,3,4,5
+
+            22 13 17 11  0
+             8  2 23  4 24
+            21  9 14 16  7
+             6 10  3 18  5
+             1 12 20 15 19
+
+            68 56 28 57 12
+            78 66 20 85 51
+            35 23  7 99 44
+            86 37  8 45 49
+            40 77 32  6 88
+            """
+
+            let gameInput = try XCTUnwrap(Day04.parseInput(exampleInput))
+
+            XCTAssertEqual(gameInput.draw, [1, 2, 3, 4, 5])
+            XCTAssertEqual(gameInput.cards.count, 2)
+        }
     }
