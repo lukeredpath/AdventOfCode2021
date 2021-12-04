@@ -53,30 +53,16 @@ enum Day04 {
             Int.parser().map { NumberSquare(number: $0) },
             atLeast: 5, atMost: 5,
             separator: Whitespace<Substring.UTF8View>()
-        ).map { numbers in
-            Five<NumberSquare>(
-                a: numbers[0],
-                b: numbers[1],
-                c: numbers[2],
-                d: numbers[3],
-                e: numbers[4]
-            )
-        }
+        )
+        .map(Five<NumberSquare>.init(values:))
     )
 
     static let cardParser = Many(
         cardRowParser,
         atLeast: 5, atMost: 5,
         separator: "\n".utf8
-    ).map { rows in
-        BingoCard(
-            a: rows[0],
-            b: rows[1],
-            c: rows[2],
-            d: rows[3],
-            e: rows[4]
-        )
-    }
+    )
+    .map(Five<Line>.init(values:))
 
     static let cardsParser = Many(
         cardParser,
