@@ -97,9 +97,7 @@ enum Day04 {
         BingoCard(values: card.values.map { row in
             Line(values: row.values.map { square in
                 if square.number == number {
-                    return update(square) { square in
-                        square.marked = (square.number == number)
-                    }
+                    return update(square, mut(\.marked, true))
                 } else {
                     return square
                 }
