@@ -136,7 +136,6 @@ enum Day04 {
         var cards = input.cards
         for number in input.draw {
             cards = cards.map(with(number, curry(checkNumber)))
-
             if cards.count > 1 {
                 cards = cards.filter { !isWinningCard($0) }
             } else if isWinningCard(cards[0]) {
