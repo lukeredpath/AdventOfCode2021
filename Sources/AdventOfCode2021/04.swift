@@ -137,7 +137,7 @@ enum Day04 {
             .reduce(0) { $0 + $1.number }
     }
 
-    static func runGame(input: GameInput) -> GameResult? {
+    static func findFirstWinningCard(input: GameInput) -> GameResult? {
         var cards = input.cards
         for number in input.draw {
             cards = cards.map(with(number, curry(checkNumber)))
@@ -148,9 +148,29 @@ enum Day04 {
         return nil
     }
 
+    static func findLastWinningCard(input: GameInput) -> GameResult? {
+        var cards = input.cards
+        for number in input.draw {
+            cards = cards.map(with(number, curry(checkNumber)))
+
+            if cards.count > 1 {
+                cards = cards.filter { !isWinningCard($0) }
+            } else if isWinningCard(cards[0]) {
+                return (cards[0], number)
+            }
+        }
+        return nil
+    }
+
     static let partOne = pipe(
         parseInput,
-        runGame,
+        findFirstWinningCard,
+        map(calculateWinningCardScore)
+    )
+
+    static let partTwo = pipe(
+        parseInput,
+        findLastWinningCard,
         map(calculateWinningCardScore)
     )
 }
