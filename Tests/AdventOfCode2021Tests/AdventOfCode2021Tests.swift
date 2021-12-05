@@ -294,4 +294,100 @@
             XCTAssert(lastWinningScore > 0, "Expected winning score to be non-zero")
             print("Day 04 (Part 2) answer: \(lastWinningScore)")
         }
+
+        func test05_Part1_PointCalculations() {
+//            let lineA = Day05.Line(a: .init(x: 0, y: 0), b: .init(x: 4, y: 4))
+//            XCTAssertEqual(
+//                Day05.pointsOnLine(lineA),
+//                [
+//                    .init(x: 0, y: 0),
+//                    .init(x: 1, y: 1),
+//                    .init(x: 2, y: 2),
+//                    .init(x: 3, y: 3),
+//                    .init(x: 4, y: 4)
+//                ]
+//            )
+
+            let lineB = Day05.Line(a: .init(x: 0, y: 0), b: .init(x: 0, y: 4))
+            XCTAssertEqual(
+                Day05.pointsOnLine(lineB),
+                [
+                    .init(x: 0, y: 0),
+                    .init(x: 0, y: 1),
+                    .init(x: 0, y: 2),
+                    .init(x: 0, y: 3),
+                    .init(x: 0, y: 4)
+                ]
+            )
+
+            let lineC = Day05.Line(a: .init(x: 0, y: 0), b: .init(x: 4, y: 0))
+            XCTAssertEqual(
+                Day05.pointsOnLine(lineC),
+                [
+                    .init(x: 0, y: 0),
+                    .init(x: 1, y: 0),
+                    .init(x: 2, y: 0),
+                    .init(x: 3, y: 0),
+                    .init(x: 4, y: 0)
+                ]
+            )
+
+            let lineD = Day05.Line(a: .init(x: 0, y: 4), b: .init(x: 0, y: 0))
+            XCTAssertEqual(
+                Day05.pointsOnLine(lineD),
+                [
+                    .init(x: 0, y: 0),
+                    .init(x: 0, y: 1),
+                    .init(x: 0, y: 2),
+                    .init(x: 0, y: 3),
+                    .init(x: 0, y: 4)
+                ]
+            )
+
+            let lineE = Day05.Line(a: .init(x: 4, y: 0), b: .init(x: 0, y: 0))
+            XCTAssertEqual(
+                Day05.pointsOnLine(lineE),
+                [
+                    .init(x: 0, y: 0),
+                    .init(x: 1, y: 0),
+                    .init(x: 2, y: 0),
+                    .init(x: 3, y: 0),
+                    .init(x: 4, y: 0)
+                ]
+            )
+        }
+
+        func test05_Part1_Parsing() throws {
+            var coordinateInput = "5,8"[...]
+            let point = try XCTUnwrap(Day05.coordinateParser.parse(&coordinateInput))
+            XCTAssertEqual(point, Day05.Point(x: 5, y: 8))
+
+            var lineInput = "5,8 -> 7,9"[...]
+            let line = try XCTUnwrap(Day05.lineParser.parse(&lineInput))
+            XCTAssertEqual(line, Day05.Line(a: .init(x: 5, y: 8), b: .init(x: 7, y: 9)))
+        }
+
+        func test05_Part1_Example() {
+            let exampleInput = """
+            0,9 -> 5,9
+            8,0 -> 0,8
+            9,4 -> 3,4
+            2,2 -> 2,1
+            7,0 -> 7,4
+            6,4 -> 2,0
+            0,9 -> 2,9
+            3,4 -> 1,4
+            0,0 -> 8,8
+            5,5 -> 8,2
+            """
+
+            let totalPoints = Day05.partOne(exampleInput)
+            XCTAssertEqual(5, totalPoints)
+        }
+
+        func test05_Part1_Solution() {
+            let totalPoints = Day05.partOne(input_05)
+            XCTAssert(totalPoints > 0, "Expected non-zero points")
+            print("Day 5 (Part 1) answer: \(totalPoints)")
+        }
     }
