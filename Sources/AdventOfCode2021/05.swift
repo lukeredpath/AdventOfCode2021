@@ -34,11 +34,7 @@ enum Day05 {
     }
 
     static func coordinateRange(a: Int, b: Int) -> [Int] {
-        if a > b {
-            return (b...a).reversed()
-        } else {
-            return Array(a...b)
-        }
+        (a < b) ? Array(a...b) : (b...a).reversed()
     }
 
     static func pointsOnLine(_ line: Line, countDiagonals: Bool) -> [Point] {
@@ -47,20 +43,19 @@ enum Day05 {
             return coordinateRange(a: line.a.y, b: line.b.y).map {
                 .init(x: line.a.x, y: $0)
             }
-        }
-        if line.a.y == line.b.y {
+        } else if line.a.y == line.b.y {
             // handle horizontal lines
             return coordinateRange(a: line.a.x, b: line.b.x).map {
                 .init(x: $0, y: line.a.y)
             }
+        } else if countDiagonals {
+            // handle diagonal lines
+            return zip(
+                coordinateRange(a: line.a.x, b: line.b.x),
+                coordinateRange(a: line.a.y, b: line.b.y)
+            ).map(Point.init)
         }
-        guard countDiagonals else { return [] }
-
-        // handle diagonal lines
-        return zip(
-            coordinateRange(a: line.a.x, b: line.b.x),
-            coordinateRange(a: line.a.y, b: line.b.y)
-        ).map(Point.init)
+        return []
     }
 
     static func countOverlappingPoints(in lines: [Line], countDiagonals: Bool) -> Int {
