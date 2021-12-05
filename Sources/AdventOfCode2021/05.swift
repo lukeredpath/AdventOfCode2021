@@ -33,27 +33,49 @@ enum Day05 {
         return result
     }
 
-    static func pointsOnLine(_ line: Line) -> [Point] {
+    static func coordinateRange(a: Int, b: Int) -> [Int] {
+        if a > b {
+            return (b...a).reversed()
+        } else {
+            return Array(a...b)
+        }
+    }
+
+    static func pointsOnLine(_ line: Line, countDiagonals: Bool) -> [Point] {
         if line.a.x == line.b.x {
             // handle vertical lines
-            return (min(line.a.y, line.b.y)...max(line.a.y, line.b.y)).map {
+            return coordinateRange(a: line.a.y, b: line.b.y).map {
                 .init(x: line.a.x, y: $0)
             }
         }
         if line.a.y == line.b.y {
             // handle horizontal lines
-            return (min(line.a.x, line.b.x)...max(line.a.x, line.b.x)).map {
+            return coordinateRange(a: line.a.x, b: line.b.x).map {
                 .init(x: $0, y: line.a.y)
             }
         }
-        return []
+        guard countDiagonals else { return [] }
+
+        // handle diagonal lines
+        return zip(
+            coordinateRange(a: line.a.x, b: line.b.x),
+            coordinateRange(a: line.a.y, b: line.b.y)
+        ).map(Point.init)
     }
 
-    static func countOverlappingPoints(in lines: [Line]) -> Int {
-        let allPoints = lines.flatMap(pointsOnLine)
+    static func countOverlappingPoints(in lines: [Line], countDiagonals: Bool) -> Int {
+        let allPoints = lines.flatMap(with(countDiagonals, flip(curry(pointsOnLine))))
         let grouped = Dictionary(grouping: allPoints, by: { $0 })
         return grouped.filter { $0.value.count > 1 }.count
     }
 
-    static let partOne = pipe(parseInput, countOverlappingPoints)
+    static let partOne = pipe(
+        parseInput,
+        with(false, flip(curry(countOverlappingPoints)))
+    )
+
+    static let partTwo = pipe(
+        parseInput,
+        with(true, flip(curry(countOverlappingPoints)))
+    )
 }
