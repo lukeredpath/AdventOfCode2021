@@ -468,4 +468,42 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(totalFish > 0, "Expected non-zero fish")
         print("Day 6 (Part 1) answer: \(totalFish)")
     }
+
+    func test06_Part2_SimulateDay() {
+        var counts = Day06.counts(for: [3, 4, 3, 1, 2])
+
+        Day06.simulateDay(counts: &counts)
+        XCTAssertEqual(
+            [0: 1, 1: 1, 2: 2, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0],
+            counts // 2,3,2,0,1
+        )
+
+        Day06.simulateDay(counts: &counts)
+        XCTAssertEqual(
+            [0: 1, 1: 2, 2: 1, 3: 0, 4: 0, 5: 0, 6: 1, 7: 0, 8: 1],
+            counts // 1,2,1,6,0,8
+        )
+
+        Day06.simulateDay(counts: &counts)
+        XCTAssertEqual(
+            [0: 2, 1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 1, 7: 1, 8: 1],
+            counts // 0,1,0,5,6,7,8
+        )
+    }
+
+    func test06_Part2_Example() {
+        let simulation1 = Day06.produceOptimizedSimulation(numberOfDays: 18)
+        let result1 = simulation1([3, 4, 3, 1, 2])
+        XCTAssertEqual(result1, 26)
+
+        let simulation2 = Day06.produceOptimizedSimulation(numberOfDays: 256)
+        let result2 = simulation2([3, 4, 3, 1, 2])
+        XCTAssertEqual(result2, 26984457539)
+    }
+
+    func test06_Part2_Solution() {
+        let totalFish = Day06.partTwo(input_06)
+        XCTAssert(totalFish > 0, "Expected non-zero fish")
+        print("Day 6 (Part 2) answer: \(totalFish)")
+    }
 }
