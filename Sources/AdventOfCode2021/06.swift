@@ -5,11 +5,9 @@ import Parsing
 enum Day06 {
     typealias Lanternfish = UInt
 
-    static let inputParser = Many(UInt.parser(), separator: ",")
-
     static func parseInput(_ input: String) -> [Lanternfish] {
         var input = input[...]
-        guard let result = inputParser.parse(&input) else {
+        guard let result = Many(UInt.parser(), separator: ",").parse(&input) else {
             fatalError("Could not parse input!")
         }
         return result
