@@ -431,4 +431,41 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(totalPoints > 0, "Expected non-zero points")
         print("Day 5 (Part 2) answer: \(totalPoints)")
     }
+
+    func test06_Part1_SingleFish() {
+        var fish: [Day06.Lanternfish] = [3]
+
+        fish = fish.flatMap(Day06.dayElapsed)
+        XCTAssertEqual([2], fish)
+
+        fish = fish.flatMap(Day06.dayElapsed)
+        XCTAssertEqual([1], fish)
+
+        fish = fish.flatMap(Day06.dayElapsed)
+        XCTAssertEqual([0], fish)
+
+        fish = fish.flatMap(Day06.dayElapsed)
+        XCTAssertEqual([6, 8], fish)
+    }
+
+    func test06_Part1_Parsing() {
+        let fish = Day06.parseInput("3,4,3,1,2")
+        XCTAssertEqual(fish, [3, 4, 3, 1, 2])
+    }
+
+    func test06_Part1_Example() {
+        let simulation1 = Day06.produceSimulation(numberOfDays: 18)
+        let result1 = simulation1([3, 4, 3, 1, 2])
+        XCTAssertEqual(result1.count, 26)
+
+        let simulation2 = Day06.produceSimulation(numberOfDays: 80)
+        let result2 = simulation2([3, 4, 3, 1, 2])
+        XCTAssertEqual(result2.count, 5934)
+    }
+
+    func test06_Part1_Solution() {
+        let totalFish = Day06.partOne(input_06)
+        XCTAssert(totalFish > 0, "Expected non-zero fish")
+        print("Day 6 (Part 1) answer: \(totalFish)")
+    }
 }
