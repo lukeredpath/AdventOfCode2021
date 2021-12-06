@@ -14,11 +14,7 @@ enum Day06 {
     }
 
     static func dayElapsed(for fish: Lanternfish) -> [Lanternfish] {
-        if fish > 0 {
-            return [fish - 1]
-        } else {
-            return [6, 8]
-        }
+        fish > 0 ? [fish - 1] : [6, 8]
     }
 
     static func performSimulation(
