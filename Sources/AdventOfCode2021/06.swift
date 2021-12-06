@@ -5,6 +5,8 @@ import Parsing
 enum Day06 {
     typealias Lanternfish = UInt
 
+    static let lifecycleRange = (0...8)
+
     static func parseInput(_ input: String) -> [Lanternfish] {
         var input = input[...]
         guard let result = Many(UInt.parser(), separator: ",").parse(&input) else {
@@ -19,7 +21,7 @@ enum Day06 {
 
     static func counts(for currentFish: [Lanternfish]) -> [Lanternfish: UInt] {
         var counts: [Lanternfish: UInt] = [:]
-        for fish in (0...7) {
+        for fish in lifecycleRange {
             let count = currentFish.filter { $0 == fish }.count
             counts[Day06.Lanternfish(fish), default: 0] = UInt(count)
         }
@@ -28,7 +30,7 @@ enum Day06 {
 
     static func simulateDay(counts: inout [Lanternfish: UInt]) {
         var numberReproduced: UInt = 0
-        for fish in (0...8) {
+        for fish in lifecycleRange {
             let count = counts[Day06.Lanternfish(fish), default: 0]
             counts[Day06.Lanternfish(fish), default: 0] -= count
 
