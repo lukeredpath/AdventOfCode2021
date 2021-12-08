@@ -506,4 +506,28 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(totalFish > 0, "Expected non-zero fish")
         print("Day 6 (Part 2) answer: \(totalFish)")
     }
+
+    func test07_Part1_Example() {
+        let totalFuel = Day07.findOptimumFuel(input: [16,1,2,0,4,2,7,1,2,14], calculateFuel: Day07.calculateFuel)
+
+        XCTAssertEqual(37, totalFuel)
+    }
+
+    func test07_Part1_Solution() throws {
+        let totalFuel = try XCTUnwrap(Day07.partOne(input_07))
+        XCTAssert(totalFuel > 0, "Expected non-zero fuel")
+        print("Day 7 (Part 1) answer: \(totalFuel)")
+    }
+
+    func test07_Part2_Example() {
+        let totalFuel = Day07.findOptimumFuel(input: [16,1,2,0,4,2,7,1,2,14], calculateFuel: Day07.calculateFuel2)
+
+        XCTAssertEqual(168, totalFuel)
+    }
+
+    func test07_Part2_Solution() throws {
+        let totalFuel = try XCTUnwrap(Day07.partTwo(input_07))
+        XCTAssert(totalFuel > 0, "Expected non-zero fuel")
+        print("Day 7 (Part 2) answer: \(totalFuel)")
+    }
 }
