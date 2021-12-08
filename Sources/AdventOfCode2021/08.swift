@@ -3,8 +3,6 @@ import Parsing
 import Overture
 
 enum Day08 {
-    typealias Segment = Character
-    typealias Signal = Character
     typealias SignalMapping = [String: Int]
 
     struct SignalPattern: Hashable {
