@@ -530,4 +530,52 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(totalFuel > 0, "Expected non-zero fuel")
         print("Day 7 (Part 2) answer: \(totalFuel)")
     }
+
+    func test08_Part1_Parsing() {
+        let input = """
+        acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf
+        edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+        """
+
+        let result = Day08.parseInput(input)
+        XCTAssertEqual(2, result.count)
+
+        let display = result[0].display
+        XCTAssertEqual(display.one.signals, "cdfeb")
+        XCTAssertEqual(display.two.signals, "fcadb")
+        XCTAssertEqual(display.three.signals, "cdfeb")
+        XCTAssertEqual(display.four.signals, "cdbaf")
+
+        let signals = result[0].signals
+        XCTAssertEqual(10, signals.count)
+        XCTAssertEqual(signals[0].signals, "acedgfb")
+        XCTAssertEqual(signals[1].signals, "cdfbe")
+        XCTAssertEqual(signals[2].signals, "gcdfa")
+        XCTAssertEqual(signals[3].signals, "fbcad")
+        XCTAssertEqual(signals[4].signals, "dab")
+        XCTAssertEqual(signals[5].signals, "cefabd")
+        XCTAssertEqual(signals[6].signals, "cdfgeb")
+        XCTAssertEqual(signals[7].signals, "eafb")
+        XCTAssertEqual(signals[8].signals, "cagedb")
+        XCTAssertEqual(signals[9].signals, "ab")
+    }
+
+    func test08_Part1_Example() {
+        let exampleInput = """
+        be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+        edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+        fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+        fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
+        aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
+        fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
+        dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
+        bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
+        egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
+        gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
+        """
+
+        let uniqueSignalCount = Day08.partOne(exampleInput)
+
+        XCTAssertEqual(26, uniqueSignalCount)
+    }
 }
