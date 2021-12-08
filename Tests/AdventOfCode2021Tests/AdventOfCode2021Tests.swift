@@ -546,18 +546,18 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssertEqual(display.three.signals, "cdfeb")
         XCTAssertEqual(display.four.signals, "cdbaf")
 
-        let signals = result[0].signals
+        let signals = result[0].signals.map(\.signals)
         XCTAssertEqual(10, signals.count)
-        XCTAssertEqual(signals[0].signals, "acedgfb")
-        XCTAssertEqual(signals[1].signals, "cdfbe")
-        XCTAssertEqual(signals[2].signals, "gcdfa")
-        XCTAssertEqual(signals[3].signals, "fbcad")
-        XCTAssertEqual(signals[4].signals, "dab")
-        XCTAssertEqual(signals[5].signals, "cefabd")
-        XCTAssertEqual(signals[6].signals, "cdfgeb")
-        XCTAssertEqual(signals[7].signals, "eafb")
-        XCTAssertEqual(signals[8].signals, "cagedb")
-        XCTAssertEqual(signals[9].signals, "ab")
+        XCTAssert(signals.contains("acedgfb"))
+        XCTAssert(signals.contains("cdfbe"))
+        XCTAssert(signals.contains("gcdfa"))
+        XCTAssert(signals.contains("fbcad"))
+        XCTAssert(signals.contains("dab"))
+        XCTAssert(signals.contains("cefabd"))
+        XCTAssert(signals.contains("cdfgeb"))
+        XCTAssert(signals.contains("eafb"))
+        XCTAssert(signals.contains("cagedb"))
+        XCTAssert(signals.contains("ab"))
     }
 
     func test08_Part1_Example() {
@@ -583,5 +583,33 @@ final class AdventOfCode2021Tests: XCTestCase {
         let uniqueSignalCount = try XCTUnwrap(Day08.partOne(input_08))
         XCTAssert(uniqueSignalCount > 0, "Expected non-zero signal count")
         print("Day 8 (Part 1) answer: \(uniqueSignalCount)")
+    }
+
+    func test08_Part2_Example() {
+        let exampleInput = """
+        acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf
+        """
+        let input = Day08.parseInput(exampleInput)
+        let row = input[0]
+        let mapping = Day08.deduceSignalMapping(from: row.signals)
+
+        XCTAssertEqual(0, mapping["abcdeg"])
+        XCTAssertEqual(1, mapping["ab"])
+        XCTAssertEqual(2, mapping["acdfg"])
+        XCTAssertEqual(3, mapping["abcdf"])
+        XCTAssertEqual(4, mapping["abef"])
+        XCTAssertEqual(5, mapping["bcdef"])
+        XCTAssertEqual(6, mapping["bcdefg"])
+        XCTAssertEqual(7, mapping["abd"])
+        XCTAssertEqual(8, mapping["abcdefg"])
+        XCTAssertEqual(9, mapping["abcdef"])
+
+        XCTAssertEqual(5353, Day08.decodeDisplay(row.display, mapping: mapping))
+    }
+
+    func test08_Part2_Solution() throws {
+        let displayTotal = try XCTUnwrap(Day08.partTwo(input_08))
+        XCTAssert(displayTotal > 0, "Expected non-zero display total")
+        print("Day 8 (Part 2) answer: \(displayTotal)")
     }
 }
