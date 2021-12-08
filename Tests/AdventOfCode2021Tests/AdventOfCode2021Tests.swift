@@ -578,4 +578,10 @@ final class AdventOfCode2021Tests: XCTestCase {
 
         XCTAssertEqual(26, uniqueSignalCount)
     }
+
+    func test08_Part1_Solution() throws {
+        let uniqueSignalCount = try XCTUnwrap(Day08.partOne(input_08))
+        XCTAssert(uniqueSignalCount > 0, "Expected non-zero signal count")
+        print("Day 8 (Part 1) answer: \(uniqueSignalCount)")
+    }
 }
