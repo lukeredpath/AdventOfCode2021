@@ -627,7 +627,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssertEqual(5, input.count)
         XCTAssertEqual(10, input[0].count)
 
-        let lowPoints = Day09.findLowPoints(in: input)
+        let lowPoints = Day09.findLowPointValues(in: input)
 
         XCTAssertEqual([1, 0, 5, 5], lowPoints)
         XCTAssertEqual(15, Day09.calculateRiskScore(lowPoints: lowPoints))
@@ -637,5 +637,25 @@ final class AdventOfCode2021Tests: XCTestCase {
         let riskScore = try XCTUnwrap(Day09.partOne(input_09))
         XCTAssert(riskScore > 0, "Expected non-zero risk score")
         print("Day 9 (Part 1) answer: \(riskScore)")
+    }
+
+    func test09_Part2_Example() throws {
+        let exampleInput = """
+        2199943210
+        3987894921
+        9856789892
+        8767896789
+        9899965678
+        """
+
+        let result = Day09.partTwo(exampleInput)
+
+        XCTAssertEqual(1134, result)
+    }
+
+    func test09_Part2_Solution() throws {
+        let basinScore = try XCTUnwrap(Day09.partTwo(input_09))
+        XCTAssert(basinScore > 0, "Expected non-zero basin score")
+        print("Day 9 (Part 2) answer: \(basinScore)")
     }
 }
