@@ -612,4 +612,30 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(displayTotal > 0, "Expected non-zero display total")
         print("Day 8 (Part 2) answer: \(displayTotal)")
     }
+
+    func test09_Part1_Example() {
+        let exampleInput = """
+        2199943210
+        3987894921
+        9856789892
+        8767896789
+        9899965678
+        """
+
+        let input = Day09.parseInput(exampleInput)
+
+        XCTAssertEqual(5, input.count)
+        XCTAssertEqual(10, input[0].count)
+
+        let lowPoints = Day09.findLowPoints(in: input)
+
+        XCTAssertEqual([1, 0, 5, 5], lowPoints)
+        XCTAssertEqual(15, Day09.calculateRiskScore(lowPoints: lowPoints))
+    }
+
+    func test09_Part1_Solution() throws {
+        let riskScore = try XCTUnwrap(Day09.partOne(input_09))
+        XCTAssert(riskScore > 0, "Expected non-zero risk score")
+        print("Day 9 (Part 1) answer: \(riskScore)")
+    }
 }
