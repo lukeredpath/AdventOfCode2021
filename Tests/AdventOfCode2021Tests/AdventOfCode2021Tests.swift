@@ -658,4 +658,64 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(basinScore > 0, "Expected non-zero basin score")
         print("Day 9 (Part 2) answer: \(basinScore)")
     }
+    
+    func test10_Part1_ScanChunks() {
+        XCTAssertNil(Day10.scanChunks("[]"))
+        XCTAssertNil(Day10.scanChunks("[<>{<>}]"))
+        XCTAssertNil(Day10.scanChunks(">>>123[<>{<>}]"))
+        XCTAssertNil(Day10.scanChunks("[(<>){<>}]"))
+        
+        XCTAssertEqual(
+            Day10.scanChunks("[(<>}]"),
+            .init(expected: ")", found: "}")
+        )
+    }
+    
+    func test10_Part2_ExampleCorruptedChunks() {
+        XCTAssertEqual(
+            Day10.scanChunks("{([(<{}[<>[]}>{[]{[(<()>"),
+            .init(expected: "]", found: "}")
+        )
+        XCTAssertEqual(
+            Day10.scanChunks("[[<[([]))<([[{}[[()]]]"),
+            .init(expected: "]", found: ")")
+        )
+        XCTAssertEqual(
+            Day10.scanChunks("[{[{({}]{}}([{[{{{}}([]"),
+            .init(expected: ")", found: "]")
+        )
+        XCTAssertEqual(
+            Day10.scanChunks("[<(<(<(<{}))><([]([]()"),
+            .init(expected: ">", found: ")")
+        )
+        XCTAssertEqual(
+            Day10.scanChunks("<{([([[(<>()){}]>(<<{{"),
+            .init(expected: "]", found: ">")
+        )
+    }
+    
+    func testDay10_Part1_Example() {
+        let input = """
+        [({(<(())[]>[[{[]{<()<>>
+        [(()[<>])]({[<{<<[]>>(
+        {([(<{}[<>[]}>{[]{[(<()>
+        (((({<>}<{<{<>}{[]{[]{}
+        [[<[([]))<([[{}[[()]]]
+        [{[{({}]{}}([{[{{{}}([]
+        {<[[]]>}<{[{[{[]{()[[[]
+        [<(<(<(<{}))><([]([]()
+        <{([([[(<>()){}]>(<<{{
+        <{([{{}}[<[[[<>{}]]]>[]]
+        """
+        
+        let score = Day10.partOne(input)
+        
+        XCTAssertEqual(score, 26397)
+    }
+    
+    func test10_Part1_Solution() throws {
+        let score = try XCTUnwrap(Day10.partOne(input_10))
+        XCTAssert(score > 0, "Expected non-zero score")
+        print("Day 10 (Part 1) answer: \(score)")
+    }
 }
