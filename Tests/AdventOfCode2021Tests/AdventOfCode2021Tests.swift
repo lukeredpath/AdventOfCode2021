@@ -667,30 +667,35 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         XCTAssertEqual(
             Day10.scanChunks("[(<>}]"),
-            .init(expected: ")", found: "}")
+            .corrupted(expected: ")", found: "}")
+        )
+        
+        XCTAssertEqual(
+            Day10.scanChunks("[(<>)"),
+            .incomplete(stack: ["["])
         )
     }
     
     func test10_Part2_ExampleCorruptedChunks() {
         XCTAssertEqual(
             Day10.scanChunks("{([(<{}[<>[]}>{[]{[(<()>"),
-            .init(expected: "]", found: "}")
+            .corrupted(expected: "]", found: "}")
         )
         XCTAssertEqual(
             Day10.scanChunks("[[<[([]))<([[{}[[()]]]"),
-            .init(expected: "]", found: ")")
+            .corrupted(expected: "]", found: ")")
         )
         XCTAssertEqual(
             Day10.scanChunks("[{[{({}]{}}([{[{{{}}([]"),
-            .init(expected: ")", found: "]")
+            .corrupted(expected: ")", found: "]")
         )
         XCTAssertEqual(
             Day10.scanChunks("[<(<(<(<{}))><([]([]()"),
-            .init(expected: ">", found: ")")
+            .corrupted(expected: ">", found: ")")
         )
         XCTAssertEqual(
             Day10.scanChunks("<{([([[(<>()){}]>(<<{{"),
-            .init(expected: "]", found: ">")
+            .corrupted(expected: "]", found: ">")
         )
     }
     
@@ -717,5 +722,50 @@ final class AdventOfCode2021Tests: XCTestCase {
         let score = try XCTUnwrap(Day10.partOne(input_10))
         XCTAssert(score > 0, "Expected non-zero score")
         print("Day 10 (Part 1) answer: \(score)")
+    }
+    
+    func test10_Part2_Autocompletion() {
+        let incomplete = "[({(<(())[]>[[{[]{<()<>>"
+        let error = Day10.scanChunks(incomplete)
+        
+        XCTAssertEqual(error, .incomplete(stack: ["[", "(", "{", "(", "[", "[", "{", "{"]))
+        XCTAssertEqual(
+            "}}]])})]",
+            String(Day10.findCompletionCharacters(stack: ["[", "(", "{", "(", "[", "[", "{", "{"]))
+        )
+    }
+    
+    func test10_Part2_Scoring() {
+        let characters: [Character] = ["}", "}", "]", "]", ")", "}", ")", "]"]
+        let score = Day10.autocompleteScore(characters: characters)
+        XCTAssertEqual(288957, score)
+        
+        let scores = [3, 1, 2, 5, 4]
+        XCTAssertEqual(3, Day10.findWinningScore(scores))
+    }
+    
+    func test10_Part2_Example() {
+        let input = """
+        [({(<(())[]>[[{[]{<()<>>
+        [(()[<>])]({[<{<<[]>>(
+        {([(<{}[<>[]}>{[]{[(<()>
+        (((({<>}<{<{<>}{[]{[]{}
+        [[<[([]))<([[{}[[()]]]
+        [{[{({}]{}}([{[{{{}}([]
+        {<[[]]>}<{[{[{[]{()[[[]
+        [<(<(<(<{}))><([]([]()
+        <{([([[(<>()){}]>(<<{{
+        <{([{{}}[<[[[<>{}]]]>[]]
+        """
+        
+        let score = Day10.partTwo(input)
+        
+        XCTAssertEqual(score, 288957)
+    }
+    
+    func test10_Part2_Solution() throws {
+        let score = try XCTUnwrap(Day10.partTwo(input_10))
+        XCTAssert(score > 0, "Expected non-zero score")
+        print("Day 10 (Part 2) answer: \(score)")
     }
 }
