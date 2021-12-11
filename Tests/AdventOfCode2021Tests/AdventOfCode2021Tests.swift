@@ -975,4 +975,10 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(output.flashes > 0, "Expected non-zero flashes")
         print("Day 11 (Part 1) answer: \(output.flashes)")
     }
+    
+    func test11_Part2_Solution() throws {
+        let step = try XCTUnwrap(Day11.partTwo(input_11))
+        XCTAssert(step > 0, "Expected non-zero step")
+        print("Day 11 (Part 2) answer: \(step)")
+    }
 }

@@ -81,6 +81,22 @@ enum Day11 {
         }
     }
     
+    static func isInSync(_ grid: OctupusGrid) -> Bool {
+        grid.flatMap { $0 }.allSatisfy { $0 == 0 }
+    }
+    
+    static func findSyncPoint(grid: OctupusGrid) -> Int {
+        var stepNumber = 0
+        var inSync = false
+        var grid = grid
+        while !inSync {
+            stepNumber += 1
+            grid = performStep(grid).grid
+            inSync = isInSync(grid)
+        }
+        return stepNumber
+    }
+    
     static let performStep = pipe(
         incrementPower,
         with(0, flip(curry(performFlashes)))
@@ -89,5 +105,10 @@ enum Day11 {
     static let partOne = pipe(
         parseInput,
         with(100, flip(curry(performSteps)))
+    )
+    
+    static let partTwo = pipe(
+        parseInput,
+        findSyncPoint
     )
 }
