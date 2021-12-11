@@ -865,7 +865,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
     }
     
-    func testDay10_Part1_PerformStepNoFlashes() {
+    func testDay11_Part1_PerformStepNoFlashes() {
         let startingGrid = [
             [0, 0, 0],
             [0, 0, 0],
@@ -882,6 +882,7 @@ final class AdventOfCode2021Tests: XCTestCase {
                 [1, 1, 1]
             ]
         )
+        XCTAssertEqual(0, result.flashes)
         
         result = Day11.performStep(result.grid)
         
@@ -893,5 +894,85 @@ final class AdventOfCode2021Tests: XCTestCase {
                 [2, 2, 2]
             ]
         )
+        XCTAssertEqual(0, result.flashes)
+    }
+    
+    func testDay11_Part1_PerformStepFlashes() {
+        let startingGrid = [
+            [0, 0, 0],
+            [0, 8, 0],
+            [0, 0, 0]
+        ]
+        
+        var result = Day11.performStep(startingGrid)
+        
+        XCTAssertNoDifference(
+            result.grid,
+            [
+                [1, 1, 1],
+                [1, 9, 1],
+                [1, 1, 1]
+            ]
+        )
+        XCTAssertEqual(0, result.flashes)
+        
+        result = Day11.performStep(result.grid)
+
+        XCTAssertNoDifference(
+            result.grid,
+            [
+                [3, 3, 3],
+                [3, 0, 3],
+                [3, 3, 3]
+            ]
+        )
+        XCTAssertEqual(1, result.flashes)
+    }
+    
+    func testDay11_Part1_Example() throws {
+        let exampleInput = """
+        5483143223
+        2745854711
+        5264556173
+        6141336146
+        6357385478
+        4167524645
+        2176841721
+        6882881134
+        4846848554
+        5283751526
+        """
+        
+        let startGrid = try XCTUnwrap(Day11.parseInput(exampleInput))
+        
+        var output = Day11.performStep(startGrid)
+        XCTAssertEqual(0, output.flashes)
+        
+        output = Day11.performStep(output.grid)
+        XCTAssertEqual(35, output.flashes)
+        
+        let expectedGrid = try XCTUnwrap(Day11.parseInput("""
+        8807476555
+        5089087054
+        8597889608
+        8485769600
+        8700908800
+        6600088989
+        6800005943
+        0000007456
+        9000000876
+        8700006848
+        """))
+        XCTAssertNoDifference(output.grid, expectedGrid)
+        
+        let result = Day11.partOne(exampleInput)
+
+        XCTAssertEqual(204, result.flashes)
+    }
+    
+    func test11_Part1_Solution() throws {
+        let output = try XCTUnwrap(Day11.partOne(input_11))
+        XCTAssert(output.flashes > 0, "Expected non-zero flashes")
+        print("Day 11 (Part 1) answer: \(output.flashes)")
     }
 }
