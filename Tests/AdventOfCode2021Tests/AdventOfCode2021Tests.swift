@@ -1,4 +1,6 @@
 import XCTest
+import CustomDump
+
 @testable import AdventOfCode2021
 
 final class AdventOfCode2021Tests: XCTestCase {
@@ -767,5 +769,129 @@ final class AdventOfCode2021Tests: XCTestCase {
         let score = try XCTUnwrap(Day10.partTwo(input_10))
         XCTAssert(score > 0, "Expected non-zero score")
         print("Day 10 (Part 2) answer: \(score)")
+    }
+    
+    func test11_Part1_GridCalculations() {
+        let exampleGrid = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]
+        
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(0, 0), in: exampleGrid),
+            .init([
+                .init(0, 1),
+                .init(1, 0),
+                .init(1, 1)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(0, 1), in: exampleGrid),
+            .init([
+                .init(0, 0),
+                .init(0, 2),
+                .init(1, 0),
+                .init(1, 1),
+                .init(1, 2)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(0, 2), in: exampleGrid),
+            .init([
+                .init(0, 1),
+                .init(1, 1),
+                .init(1, 2)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(1, 0), in: exampleGrid),
+            .init([
+                .init(0, 0),
+                .init(0, 1),
+                .init(1, 1),
+                .init(2, 0),
+                .init(2, 1)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(1, 1), in: exampleGrid),
+            .init([
+                .init(0, 0),
+                .init(0, 1),
+                .init(0, 2),
+                .init(1, 0),
+                .init(1, 2),
+                .init(2, 0),
+                .init(2, 1),
+                .init(2, 2)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(1, 2), in: exampleGrid),
+            .init([
+                .init(0, 1),
+                .init(0, 2),
+                .init(1, 1),
+                .init(2, 1),
+                .init(2, 2)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(2, 0), in: exampleGrid),
+            .init([
+                .init(1, 0),
+                .init(1, 1),
+                .init(2, 1)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(2, 1), in: exampleGrid),
+            .init([
+                .init(1, 0),
+                .init(1, 1),
+                .init(1, 2),
+                .init(2, 0),
+                .init(2, 2)
+            ])
+        )
+        XCTAssertNoDifference(
+            Day11.findSurroundingPoints(of: .init(2, 2), in: exampleGrid),
+            .init([
+                .init(1, 1),
+                .init(1, 2),
+                .init(2, 1)
+            ])
+        )
+    }
+    
+    func testDay10_Part1_PerformStepNoFlashes() {
+        let startingGrid = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
+        
+        var result = Day11.performStep(startingGrid)
+        
+        XCTAssertNoDifference(
+            result.grid,
+            [
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1]
+            ]
+        )
+        
+        result = Day11.performStep(result.grid)
+        
+        XCTAssertNoDifference(
+            result.grid,
+            [
+                [2, 2, 2],
+                [2, 2, 2],
+                [2, 2, 2]
+            ]
+        )
     }
 }

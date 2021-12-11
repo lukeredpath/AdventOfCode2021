@@ -19,6 +19,10 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-parsing",
             from: "0.3.1"
+        ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-custom-dump",
+            from: "0.3.0"
         )
     ],
     targets: [
@@ -31,6 +35,10 @@ let package = Package(
         ),
         .testTarget(
             name: "AdventOfCode2021Tests",
-            dependencies: ["AdventOfCode2021"]),
+            dependencies: [
+                "AdventOfCode2021",
+                .product(name: "CustomDump", package: "swift-custom-dump")
+            ]
+        ),
     ]
 )
