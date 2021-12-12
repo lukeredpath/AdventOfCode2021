@@ -981,4 +981,124 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(step > 0, "Expected non-zero step")
         print("Day 11 (Part 2) answer: \(step)")
     }
+    
+    func test12_Part1_SimpleRoute() {
+        let paths = [
+            ("start", "B"),
+            ("start", "C"),
+            ("B", "end"),
+            ("C", "end")
+        ]
+        
+        let expectedRoutes = Set([
+            ["start", "B", "end"],
+            ["start", "C", "end"]
+        ])
+        
+        let result = Day12.calculateRoutes(
+            map: Day12.mapPaths(paths)
+        )
+        
+        XCTAssertNoDifference(expectedRoutes, result)
+    }
+    
+    func test12_Part1_RouteWithDeadEnds() {
+        let paths = [
+            ("start", "B"),
+            ("start", "C"),
+            ("start", "d"),
+            ("B", "end"),
+            ("B", "e"),
+            ("C", "end")
+        ]
+        
+        let expectedRoutes = Set([
+            ["start", "B", "end"],
+            ["start", "C", "end"],
+            ["start", "B", "e", "B", "end"]
+        ])
+        
+        let result = Day12.calculateRoutes(
+            map: Day12.mapPaths(paths)
+        )
+        
+        XCTAssertNoDifference(expectedRoutes, result)
+    }
+    
+    func test12_Part1_RouteWithSmallCaves() {
+        let paths = [
+            ("start", "A"),
+            ("start", "b"),
+            ("A", "c"),
+            ("A", "b"),
+            ("b", "d"),
+            ("A", "end"),
+            ("b", "end")
+        ]
+        
+        let expectedRoutes = Set([
+            ["start", "A", "b", "A", "c", "A", "end"],
+            ["start", "A", "b", "A", "end"],
+            ["start", "A", "b", "end"],
+            ["start", "A", "c", "A", "b", "A", "end"],
+            ["start", "A", "c", "A", "b", "end"],
+            ["start", "A", "c", "A", "end"],
+            ["start", "A", "end"],
+            ["start", "b", "A", "c", "A", "end"],
+            ["start", "b", "A", "end"],
+            ["start", "b", "end"]
+        ])
+        
+        let result = Day12.calculateRoutes(
+            map: Day12.mapPaths(paths)
+        )
+        
+        XCTAssertNoDifference(expectedRoutes, result)
+    }
+    
+    func test12_Part1_Examples() {
+        let exampleOne = """
+        dc-end
+        HN-start
+        start-kj
+        dc-start
+        dc-HN
+        LN-dc
+        HN-end
+        kj-sa
+        kj-HN
+        kj-dc
+        """
+        
+        XCTAssertEqual(19, Day12.partOne(exampleOne))
+        
+        let exampleTwo = """
+        fs-end
+        he-DX
+        fs-he
+        start-DX
+        pj-DX
+        end-zg
+        zg-sl
+        zg-pj
+        pj-he
+        RW-he
+        fs-DX
+        pj-RW
+        zg-RW
+        start-pj
+        he-WI
+        zg-he
+        pj-fs
+        start-RW
+        """
+        
+        XCTAssertEqual(226, Day12.partOne(exampleTwo))
+    }
+    
+    func test12_Part1_Solution() throws {
+        let count = try XCTUnwrap(Day12.partOne(input_12))
+        XCTAssert(count > 0, "Expected non-zero count")
+        print("Day 12 (Part 1) answer: \(count)")
+    }
 }
