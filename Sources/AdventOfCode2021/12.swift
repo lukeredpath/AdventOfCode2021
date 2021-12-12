@@ -60,6 +60,51 @@ enum Day12 {
         }
     }
     
+    static func calculateRoutes2(map: RouteMap) -> Set<Route> {
+        smallCaves(in: map).reduce(into: Set<Route>()) { foundRoutes, cave in
+            foundRoutes = plotRoute2(
+                on: map,
+                to: "end",
+                currentRoute: ["start"],
+                possibleDestinations: map["start", default: []],
+                smallCaveMayVisitTwice: cave,
+                foundRoutes: foundRoutes
+            )
+        }
+    }
+    
+    static func plotRoute2(
+        on map: RouteMap,
+        to end: String,
+        currentRoute: Route,
+        possibleDestinations: [String],
+        smallCaveMayVisitTwice: String,
+        foundRoutes: Set<Route> = []
+    ) -> Set<Route> {
+        guard possibleDestinations.count > 0 else { return foundRoutes }
+        
+        return possibleDestinations.reduce(into: foundRoutes) { foundRoutes, destination in
+            if destination == end {
+                foundRoutes.insert(currentRoute + [destination])
+            } else {
+                guard canVisitCave2(
+                    destination,
+                    smallCaveMayVisitTwice: smallCaveMayVisitTwice,
+                    currentRoute: currentRoute
+                ) else { return }
+                
+                foundRoutes = plotRoute2(
+                    on: map,
+                    to: end,
+                    currentRoute: currentRoute + [destination],
+                    possibleDestinations: map[destination, default: []],
+                    smallCaveMayVisitTwice: smallCaveMayVisitTwice,
+                    foundRoutes: foundRoutes
+                )
+            }
+        }
+    }
+    
     static func isSmallCave(_ string: String) -> Bool {
         string.lowercased() == string
     }
@@ -70,12 +115,34 @@ enum Day12 {
             : true
     }
     
+    static func canVisitCave2(
+        _ cave: String,
+        smallCaveMayVisitTwice: String,
+        currentRoute: Route
+    ) -> Bool {
+        if isSmallCave(cave) {
+            if cave == smallCaveMayVisitTwice {
+                return currentRoute.filter { $0 == smallCaveMayVisitTwice }.count < 2
+            } else {
+                return !currentRoute.contains(cave)
+            }
+        } else {
+            return cave != "start"
+        }
+    }
+    
     static func mapPaths(_ paths: [Path]) -> RouteMap {
         let map: RouteMap = [:]
         return paths.reduce(into: map) { partialResult, connection in
             partialResult[connection.0, default: []].append(connection.1)
             partialResult[connection.1, default: []].append(connection.0)
         }
+    }
+    
+    static func smallCaves(in map: RouteMap) -> Set<String> {
+        Set(map.keys.filter(isSmallCave).filter { cave in
+            cave != "start" && cave != "end"
+        })
     }
     
     static let partOne = pipe(
@@ -85,5 +152,10 @@ enum Day12 {
         get(\.count)
     )
     
-//    static let partTwo = ()
+    static let partTwo = pipe(
+        parseInput,
+        mapPaths,
+        calculateRoutes2,
+        get(\.count)
+    )
 }

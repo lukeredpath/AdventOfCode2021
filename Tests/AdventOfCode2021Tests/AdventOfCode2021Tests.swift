@@ -1101,4 +1101,62 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(count > 0, "Expected non-zero count")
         print("Day 12 (Part 1) answer: \(count)")
     }
+    
+    func test12_Part2_Example() {
+        let exampleOne = """
+        start-A
+        start-b
+        A-c
+        A-b
+        b-d
+        A-end
+        b-end
+        """
+        
+        XCTAssertEqual(36, Day12.partTwo(exampleOne))
+        
+        let exampleTwo = """
+        dc-end
+        HN-start
+        start-kj
+        dc-start
+        dc-HN
+        LN-dc
+        HN-end
+        kj-sa
+        kj-HN
+        kj-dc
+        """
+        
+        XCTAssertEqual(103, Day12.partTwo(exampleTwo))
+        
+        let exampleThree = """
+        fs-end
+        he-DX
+        fs-he
+        start-DX
+        pj-DX
+        end-zg
+        zg-sl
+        zg-pj
+        pj-he
+        RW-he
+        fs-DX
+        pj-RW
+        zg-RW
+        start-pj
+        he-WI
+        zg-he
+        pj-fs
+        start-RW
+        """
+        
+        XCTAssertEqual(3509, Day12.partTwo(exampleThree))
+    }
+    
+    func test12_Part2_Solution() throws {
+        let count = try XCTUnwrap(Day12.partTwo(input_12))
+        XCTAssert(count > 0, "Expected non-zero count")
+        print("Day 12 (Part 2) answer: \(count)")
+    }
 }
