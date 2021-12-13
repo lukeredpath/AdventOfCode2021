@@ -69,9 +69,7 @@ enum Day13 {
     }
 
     static func applyFolds(_ folds: [FoldPoint], to grid: MarkedGrid) -> MarkedGrid {
-        folds.reduce(grid) { grid, fold in
-            return foldGrid(grid, at: fold)
-        }
+        folds.reduce(grid) { foldGrid($0, at: $1) }
     }
 
     static func processInput(_ input: Input) -> MarkedGrid {
