@@ -1266,4 +1266,8 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(count > 0, "Expected non-zero count")
         print("Day 13 (Part 1) answer: \(count)")
     }
+
+    func test13_Part2_Solution() throws {
+        Day13.partTwo(input_13)
+    }
 }

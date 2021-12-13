@@ -93,4 +93,10 @@ enum Day13 {
         processInput,
         get(\.count)
     )
+
+    static let partTwo = pipe(
+        parseInput,
+        processInput,
+        visualiseGrid
+    )
 }
