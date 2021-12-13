@@ -8,6 +8,8 @@ enum Day13 {
     typealias FoldPoint = (axis: String, value: Int)
     typealias Input = (marks: MarkedGrid, folds: [FoldPoint])
 
+    // MARK: - Parsing
+
     static let point = Int.parser()
         .skip(",")
         .take(Int.parser())
@@ -36,6 +38,8 @@ enum Day13 {
         }
         return result
     }
+
+    // MARK: - Core
 
     static func translatePointX(_ point: Point, midPoint: Int) -> Point {
         let delta = (point.x - midPoint)
@@ -86,6 +90,8 @@ enum Day13 {
         }
         print("\n\n")
     }
+
+    // MARK: - Solutions
 
     static let partOne = pipe(
         parseInput,
