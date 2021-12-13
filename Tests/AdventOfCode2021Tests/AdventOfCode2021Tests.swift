@@ -1159,4 +1159,111 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(count > 0, "Expected non-zero count")
         print("Day 12 (Part 2) answer: \(count)")
     }
+
+    func test13_Part1_FoldGridY() {
+        let points: Day13.MarkedGrid = .init([
+            .init(x: 1, y: 0),
+            .init(x: 0, y: 2),
+            .init(x: 2, y: 2)
+        ])
+
+        let foldedPoints = Day13.foldGrid(points, at: ("y", 1))
+
+        XCTAssertNoDifference(
+            foldedPoints,
+            .init([
+                .init(x: 1, y: 0),
+                .init(x: 0, y: 0),
+                .init(x: 2, y: 0)
+            ])
+        )
+    }
+
+    func test13_Part1_FoldGridX() {
+        let points: Day13.MarkedGrid = .init([
+            .init(x: 2, y: 0),
+            .init(x: 0, y: 2),
+            .init(x: 2, y: 2)
+        ])
+
+        let foldedGrid = Day13.foldGrid(points, at: ("x", 1))
+
+        XCTAssertNoDifference(
+            foldedGrid,
+            .init([
+                .init(x: 0, y: 0),
+                .init(x: 0, y: 2)
+            ])
+        )
+    }
+
+    func test13_Part1_Parsing() throws {
+        let exampleInput = """
+        6,10
+        0,14
+        9,10
+        0,3
+        10,4
+        4,11
+        6,0
+        6,12
+        4,1
+        0,13
+        10,12
+        3,4
+        3,0
+        8,4
+        1,10
+        2,14
+        8,10
+        9,0
+
+        fold along y=7
+        fold along x=5
+        """
+
+        let result = try XCTUnwrap(Day13.parseInput(exampleInput))
+
+        XCTAssertEqual(result.marks.count, 18)
+        XCTAssert(result.marks.contains(where: { $0.x == 6 && $0.y == 10}))
+        XCTAssertEqual(result.folds.count, 2)
+        XCTAssertEqual(result.folds[0].axis, "y")
+        XCTAssertEqual(result.folds[0].value, 7)
+    }
+
+    func test13_Part1_Example() {
+        let exampleInput = """
+        6,10
+        0,14
+        9,10
+        0,3
+        10,4
+        4,11
+        6,0
+        6,12
+        4,1
+        0,13
+        10,12
+        3,4
+        3,0
+        8,4
+        1,10
+        2,14
+        8,10
+        9,0
+
+        fold along y=7
+        fold along x=5
+        """
+
+        let marks = Day13.partOne(exampleInput)
+
+        XCTAssertEqual(17, marks)
+    }
+
+    func test13_Part1_Solution() throws {
+        let count = try XCTUnwrap(Day13.partOne(input_13))
+        XCTAssert(count > 0, "Expected non-zero count")
+        print("Day 13 (Part 1) answer: \(count)")
+    }
 }
