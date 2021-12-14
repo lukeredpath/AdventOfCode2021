@@ -1285,7 +1285,7 @@ final class AdventOfCode2021Tests: XCTestCase {
     }
     
     func test14_Part1_RuleApplication() {
-        let rule: Day14.InsertionRule = (.init("A", "B"), "C")
+        let rule: Day14.InsertionRule = .init(match: .init("A", "B"), insertion: "C")
         
         XCTAssertNoDifference(
             Day14.applyRule(rule, to: .init("C", "D")),
@@ -1324,8 +1324,8 @@ final class AdventOfCode2021Tests: XCTestCase {
     
     func test14_Part1_ApplyMultipleRules() {
         let rules: [Day14.InsertionRule] = [
-            (match: .init("A", "B"), insertion: "C"),
-            (match: .init("D", "E"), insertion: "F")
+            .init(match: .init("A", "B"), insertion: "C"),
+            .init(match: .init("D", "E"), insertion: "F")
         ]
         
         XCTAssertNoDifference(
@@ -1432,5 +1432,78 @@ final class AdventOfCode2021Tests: XCTestCase {
         let result = try XCTUnwrap(Day14.partOne(input_14))
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 14 (Part 1) answer: \(result)")
+    }
+    
+    func test14_Part2_AlternativeImplementation() throws {
+        let result1 = Day14.performPairInsertion2(
+            input: (template: "AAABBC", rules: []),
+            iterations: 1
+        )
+        
+        XCTAssertNoDifference(
+            result1,
+            [
+                "A": 3,
+                "B": 2,
+                "C": 1
+            ]
+        )
+        
+        let result2 = Day14.performPairInsertion2(
+            input: (
+                template: "AAABBC",
+                rules: [
+                    .init(match: .init("A", "A"), insertion: "E"),
+                    .init(match: .init("B", "B"), insertion: "F")
+                ]
+            ),
+            iterations: 1
+        )
+        
+        // AEAEABFBC
+
+        XCTAssertNoDifference(
+            result2,
+            [
+                "A": 3,
+                "B": 2,
+                "C": 1,
+                "E": 2,
+                "F": 1
+            ]
+        )
+    }
+    
+    func test14_Part2_Example() {
+        let inputString = """
+        NNCB
+
+        CH -> B
+        HH -> N
+        CB -> H
+        NH -> C
+        HB -> C
+        HC -> B
+        HN -> C
+        NN -> C
+        BH -> H
+        NC -> B
+        NB -> B
+        BN -> B
+        BB -> N
+        BC -> B
+        CC -> N
+        CN -> C
+        """
+        
+        let result = Day14.partTwo(inputString)
+        
+        XCTAssertEqual(result, 2188189693529)
+    }
+    
+    func test14_Part2_Solution() throws {
+        let result = try XCTUnwrap(Day14.partTwo(input_14))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 14 (Part 2) answer: \(result)")
     }
 }

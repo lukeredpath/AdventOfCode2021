@@ -5,8 +5,12 @@ import Parsing
 enum Day14 {
     typealias Polymer = String
     typealias Element = Character
-    typealias InsertionRule = (match: Pair<Element>, insertion: Character)
     typealias Input = (template: Polymer, rules: [InsertionRule])
+    
+    struct InsertionRule: Hashable {
+        var match: Pair<Element>
+        var insertion: Character
+    }
     
     struct Pair<T> {
         var a: T
@@ -25,7 +29,7 @@ enum Day14 {
     static let pair = Many(element, atLeast: 2, atMost: 2).map { elements -> Pair<Element> in
         .init(elements[0], elements[1])
     }
-    static let rule = pair.skip(" -> ").take(element)
+    static let rule = pair.skip(" -> ").take(element).map(InsertionRule.init)
     static let rules = Many(rule, separator: "\n")
     static let inputParser = template.skip("\n\n").take(rules)
     
@@ -70,7 +74,7 @@ enum Day14 {
     }
     
     static func performPairInsertion(input: Input, iterations count: Int) -> Polymer {
-        (1...count).reduce(into: input.template) { partialResult, _ in
+        (1...count).reduce(into: input.template) { partialResult, iteration in
             partialResult = applyRules(input.rules, to: partialResult)
         }
     }
@@ -88,11 +92,90 @@ enum Day14 {
     static func calculateDifference(between values: Pair<Int>) -> Int {
         values.a - values.b
     }
+//
+//    static func countElements(
+//        in pairs: [Pair<Element>],
+//        byApplying rules: [InsertionRule],
+//        startingCount: inout [Element: Int]
+//    ) -> [Pair<Element>] {
+//        var counts = pairs.reduce(into: startingCount) { partialCount, pair in
+//            countElements(startingPair: pair, rules: rules, counts: &partialCount)
+//        }
+
+//        return counts
+//    }
+    
+    static func performPairInsertion2(input: Input, iterations times: Int) -> [Element: Int] {
+        let pairs = extractPairs(from: input.template)
+        
+        guard pairs.count > 0 else { return [:] }
+
+        var counts: [Element: Int] = [:]
+        var matchedRuleCounts: [InsertionRule: Int] = [:]
+        
+        // First find the initial matches from the starting template
+        for pair in pairs {
+            counts[pair.a, default: 0] += 1
+            
+            if let matchingRule = input.rules.first(where: { $0.match == pair }) {
+                // Keep track of the matching rules
+                matchedRuleCounts[matchingRule, default: 0] += 1
+            }
+        }
+        
+        // Count the final right-hand element
+        counts[pairs.last!.b, default: 0] += 1
+        
+        // Now start iterating over the rule matches up to the specified count
+        let result = (1...times).reduce(into: counts) { partialCounts, _ in
+            var nextRules: [InsertionRule: Int] = [:]
+            for (rule, count) in matchedRuleCounts {
+                // First count the insertion for each matched rule.
+                partialCounts[rule.insertion, default: 0] += count
+                
+                // Now derive the next matching rules
+                
+                let pairA = Pair(rule.match.a, rule.insertion)
+                if let matchingRule = input.rules.first(where: { $0.match == pairA }) {
+                    nextRules[matchingRule, default: 0] += count
+                }
+                let pairB = Pair(rule.insertion, rule.match.b)
+                if let matchingRule = input.rules.first(where: { $0.match == pairB }) {
+                    nextRules[matchingRule, default: 0] += count
+                }
+            }
+            matchedRuleCounts = nextRules
+        }
+        return result
+    }
+    
+//    static func countElements(
+//        startingPair: Pair<Element>,
+//        rules: [InsertionRule],
+//        counts: inout [Element: Int]
+//    ) -> [Pair<Element>] {
+//        if let matchingRule = rules.first(where: { $0.match == startingPair }) {
+//            return [
+//                .init(startingPair.a, matchingRule.insertion),
+//                .init(matchingRule.insertion, startingPair.b)
+//            ]
+//        } else {
+//            // Count only the left each leaf node
+//            counts[startingPair.a, default: 0] += 1
+//        }
+//    }
     
     static let partOne = pipe(
         parseInput,
         with(10, flip(curry(performPairInsertion))),
         countElements,
+        countRange,
+        calculateDifference
+    )
+    
+    static let partTwo = pipe(
+        parseInput,
+        with(40, flip(curry(performPairInsertion2))),
         countRange,
         calculateDifference
     )
