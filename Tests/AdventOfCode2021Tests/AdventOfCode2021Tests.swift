@@ -1283,4 +1283,148 @@ final class AdventOfCode2021Tests: XCTestCase {
         //
         //    ####..##...##...##..#..#.#....#..#.#...
     }
+    
+    func test14_Part1_RuleApplication() {
+        let rule: Day14.InsertionRule = (.init("A", "B"), "C")
+        
+        XCTAssertNoDifference(
+            Day14.applyRule(rule, to: .init("C", "D")),
+            [.init("C", "D")]
+        )
+        
+        XCTAssertNoDifference(
+            Day14.applyRule(rule, to: .init("A", "B")),
+            [.init("A", "C"), .init("C", "B")]
+        )
+    }
+    
+    func test14_Part1_ExtractPairs() {
+        XCTAssertNoDifference(
+            Day14.extractPairs(from: "ABCDE"),
+            [
+                .init("A", "B"),
+                .init("B", "C"),
+                .init("C", "D"),
+                .init("D", "E")
+            ]
+        )
+    }
+    
+    func test14_Part1_CombinePairs() {
+        XCTAssertNoDifference(
+            Day14.combinePairs([
+                .init("A", "B"),
+                .init("B", "C"),
+                .init("C", "D"),
+                .init("D", "E")
+            ]),
+            "ABCDE"
+        )
+    }
+    
+    func test14_Part1_ApplyMultipleRules() {
+        let rules: [Day14.InsertionRule] = [
+            (match: .init("A", "B"), insertion: "C"),
+            (match: .init("D", "E"), insertion: "F")
+        ]
+        
+        XCTAssertNoDifference(
+            Day14.applyRules(rules, to: "ABCDE"),
+            "ACBCDFE"
+        )
+    }
+    
+    func test14_Part1_Parsing() throws {
+        let inputString = """
+        NNCB
+
+        CH -> B
+        HH -> N
+        CB -> H
+        NH -> C
+        HB -> C
+        HC -> B
+        HN -> C
+        NN -> C
+        BH -> H
+        NC -> B
+        NB -> B
+        BN -> B
+        BB -> N
+        BC -> B
+        CC -> N
+        CN -> C
+        """
+        
+        let input = try XCTUnwrap(Day14.parseInput(inputString))
+        
+        XCTAssertEqual(input.template, "NNCB")
+        XCTAssertEqual(input.rules.count, 16)
+        XCTAssertEqual(input.rules[0].match, .init("C", "H"))
+        XCTAssertEqual(input.rules[0].insertion, "B")
+    }
+    
+    func test14_Part1_CountElements() {
+        XCTAssertNoDifference(
+            Day14.countElements(in: "ABCDCDEA"),
+            [
+                "A": 2,
+                "B": 1,
+                "C": 2,
+                "D": 2,
+                "E": 1
+            ]
+        )
+        XCTAssertNoDifference(
+            Day14.countRange(in: Day14.countElements(in: "AAABBC")),
+            .init(3, 1)
+        )
+    }
+    
+    func test14_Part1_ExampleInput() throws {
+        let inputString = """
+        NNCB
+
+        CH -> B
+        HH -> N
+        CB -> H
+        NH -> C
+        HB -> C
+        HC -> B
+        HN -> C
+        NN -> C
+        BH -> H
+        NC -> B
+        NB -> B
+        BN -> B
+        BB -> N
+        BC -> B
+        CC -> N
+        CN -> C
+        """
+        
+        let input = try XCTUnwrap(Day14.parseInput(inputString))
+        
+        var polymer = Day14.performPairInsertion(input: input, iterations: 1)
+        
+        XCTAssertEqual(polymer, "NCNBCHB")
+        
+        polymer = Day14.performPairInsertion(
+            input: (template: polymer, rules: input.rules),
+            iterations: 1
+        )
+        
+        XCTAssertEqual(polymer, "NBCCNBBBCBHCB")
+        
+        polymer = Day14.performPairInsertion(
+            input: (template: polymer, rules: input.rules),
+            iterations: 1
+        )
+        
+        XCTAssertEqual(polymer, "NBBBCNCCNBBNBNBBCHBHHBCHB")
+        
+        let partOneResult = Day14.partOne(inputString)
+        
+        XCTAssertEqual(partOneResult, 1588)
+    }
 }
