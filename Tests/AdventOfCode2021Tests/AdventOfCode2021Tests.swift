@@ -1427,4 +1427,10 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         XCTAssertEqual(partOneResult, 1588)
     }
+    
+    func test14_Part1_Solution() throws {
+        let result = try XCTUnwrap(Day14.partOne(input_14))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 14 (Part 1) answer: \(result)")
+    }
 }
