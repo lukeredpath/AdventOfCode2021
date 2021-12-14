@@ -92,18 +92,8 @@ enum Day14 {
     static func calculateDifference(between values: Pair<Int>) -> Int {
         values.a - values.b
     }
-//
-//    static func countElements(
-//        in pairs: [Pair<Element>],
-//        byApplying rules: [InsertionRule],
-//        startingCount: inout [Element: Int]
-//    ) -> [Pair<Element>] {
-//        var counts = pairs.reduce(into: startingCount) { partialCount, pair in
-//            countElements(startingPair: pair, rules: rules, counts: &partialCount)
-//        }
-
-//        return counts
-//    }
+    
+    // MARK: - Part Two (optimised solution)
     
     static func performPairInsertion2(input: Input, iterations times: Int) -> [Element: Int] {
         let pairs = extractPairs(from: input.template)
@@ -111,59 +101,42 @@ enum Day14 {
         guard pairs.count > 0 else { return [:] }
 
         var counts: [Element: Int] = [:]
-        var matchedRuleCounts: [InsertionRule: Int] = [:]
         
-        // First find the initial matches from the starting template
-        for pair in pairs {
+        // First find the initial rule matches from the starting template
+        var matchedRuleCounts: [InsertionRule: Int] = pairs.reduce(into: [:]) { ruleCounts, pair in
+            // We only need to count the first of each pair.
             counts[pair.a, default: 0] += 1
             
             if let matchingRule = input.rules.first(where: { $0.match == pair }) {
                 // Keep track of the matching rules
-                matchedRuleCounts[matchingRule, default: 0] += 1
+                ruleCounts[matchingRule, default: 0] += 1
             }
         }
         
-        // Count the final right-hand element
+        // Now count the final right-hand element.
         counts[pairs.last!.b, default: 0] += 1
         
-        // Now start iterating over the rule matches up to the specified count
-        let result = (1...times).reduce(into: counts) { partialCounts, _ in
-            var nextRules: [InsertionRule: Int] = [:]
-            for (rule, count) in matchedRuleCounts {
+        // For each iteration, process the current rule matches and find the next ones.
+        return (1...times).reduce(into: counts) { partialCounts, _ in
+            matchedRuleCounts = matchedRuleCounts.enumerated().reduce(into: [:]) { nextRules, value in
+                let rule = value.element.key
+                let ruleCount = value.element.value
+                
                 // First count the insertion for each matched rule.
-                partialCounts[rule.insertion, default: 0] += count
+                partialCounts[rule.insertion, default: 0] += ruleCount
                 
                 // Now derive the next matching rules
-                
                 let pairA = Pair(rule.match.a, rule.insertion)
                 if let matchingRule = input.rules.first(where: { $0.match == pairA }) {
-                    nextRules[matchingRule, default: 0] += count
+                    nextRules[matchingRule, default: 0] += ruleCount
                 }
                 let pairB = Pair(rule.insertion, rule.match.b)
                 if let matchingRule = input.rules.first(where: { $0.match == pairB }) {
-                    nextRules[matchingRule, default: 0] += count
+                    nextRules[matchingRule, default: 0] += ruleCount
                 }
             }
-            matchedRuleCounts = nextRules
         }
-        return result
     }
-    
-//    static func countElements(
-//        startingPair: Pair<Element>,
-//        rules: [InsertionRule],
-//        counts: inout [Element: Int]
-//    ) -> [Pair<Element>] {
-//        if let matchingRule = rules.first(where: { $0.match == startingPair }) {
-//            return [
-//                .init(startingPair.a, matchingRule.insertion),
-//                .init(matchingRule.insertion, startingPair.b)
-//            ]
-//        } else {
-//            // Count only the left each leaf node
-//            counts[startingPair.a, default: 0] += 1
-//        }
-//    }
     
     static let partOne = pipe(
         parseInput,
