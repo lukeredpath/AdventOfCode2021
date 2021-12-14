@@ -1435,7 +1435,7 @@ final class AdventOfCode2021Tests: XCTestCase {
     }
     
     func test14_Part2_AlternativeImplementation() throws {
-        let result1 = Day14.performPairInsertion2(
+        let result1 = Day14.performOptimisedPairInsertion(
             input: (template: "AAABBC", rules: []),
             iterations: 1
         )
@@ -1449,7 +1449,7 @@ final class AdventOfCode2021Tests: XCTestCase {
             ]
         )
         
-        let result2 = Day14.performPairInsertion2(
+        let result2 = Day14.performOptimisedPairInsertion(
             input: (
                 template: "AAABBC",
                 rules: [

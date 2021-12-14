@@ -95,7 +95,7 @@ enum Day14 {
     
     // MARK: - Part Two (optimised solution)
     
-    static func performPairInsertion2(input: Input, iterations times: Int) -> [Element: Int] {
+    static func performOptimisedPairInsertion(input: Input, iterations times: Int) -> [Element: Int] {
         let pairs = extractPairs(from: input.template)
         
         guard pairs.count > 0 else { return [:] }
@@ -148,7 +148,7 @@ enum Day14 {
     
     static let partTwo = pipe(
         parseInput,
-        with(40, flip(curry(performPairInsertion2))),
+        with(40, flip(curry(performOptimisedPairInsertion))),
         countRange,
         calculateDifference
     )
