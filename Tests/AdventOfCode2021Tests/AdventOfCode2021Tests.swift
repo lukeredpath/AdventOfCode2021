@@ -1564,4 +1564,69 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 15 (Part 1) answer: \(result)")
     }
+    
+    func test15_Part2_ExtrapolateFullGrid() {
+        let inputGrid = """
+        1163751742
+        1381373672
+        2136511328
+        3694931569
+        7463417111
+        1319128137
+        1359912421
+        3125421639
+        1293138521
+        2311944581
+        """
+        
+        let tile = Day15.parseInput(inputGrid)
+        let fullGrid = Day15.extrapolateFullGrid(from: tile)
+        
+        XCTAssertEqual(fullGrid.count, 50)
+        XCTAssertEqual(fullGrid[0].count, 50)
+        
+        XCTAssertEqual(1, fullGrid[0][0])
+        XCTAssertEqual(2, fullGrid[0][10])
+        XCTAssertEqual(3, fullGrid[0][20])
+        XCTAssertEqual(4, fullGrid[0][30])
+        XCTAssertEqual(5, fullGrid[0][40])
+        
+        XCTAssertEqual(6, fullGrid[0][2])
+        XCTAssertEqual(7, fullGrid[0][12])
+        XCTAssertEqual(8, fullGrid[0][22])
+        XCTAssertEqual(9, fullGrid[0][32])
+        XCTAssertEqual(1, fullGrid[0][42])
+        
+        XCTAssertEqual(7, fullGrid[4][0])
+        XCTAssertEqual(8, fullGrid[14][0])
+        XCTAssertEqual(9, fullGrid[24][0])
+        XCTAssertEqual(1, fullGrid[34][0])
+        XCTAssertEqual(2, fullGrid[44][0])
+    }
+    
+    func test15_Part2_ShortestPath() {
+        let inputGrid = """
+        1163751742
+        1381373672
+        2136511328
+        3694931569
+        7463417111
+        1319128137
+        1359912421
+        3125421639
+        1293138521
+        2311944581
+        """
+        
+        let tile = Day15.parseInput(inputGrid)
+        let grid = Day15.extrapolateFullGrid(from: tile)
+        
+        XCTAssertEqual(315, Day15.findShortestDistance(in: grid))
+    }
+    
+    func test15_Part2_Solution() throws {
+        let result = try XCTUnwrap(Day15.partTwo(input_15))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 15 (Part 2) answer: \(result)")
+    }
 }

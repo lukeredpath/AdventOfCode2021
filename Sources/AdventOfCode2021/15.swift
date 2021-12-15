@@ -5,6 +5,7 @@ import Overture
 enum Day15 {
     typealias Point = Day05.Point
     typealias Grid = [[Int]]
+    typealias Distance = (point: Point, risk: Int)
     
     // MARK: - Parsing
     
@@ -43,15 +44,19 @@ enum Day15 {
     
     static func findShortestDistance(in grid: Grid) -> Int {
         // dijktstra
-        var unvisited = pointsInGrid(grid)
-        precondition(unvisited.count > 0, "Cannot calculate path through empty grid")
-
         let start = Point(x: 0, y: 0)
         let target = Point(x: grid[0].count - 1, y: grid.count - 1)
         var distances: [Point: Int] = [start: 0]
-        var currentNode: Point? = start
+        var queue = PriorityQueue<Point> {
+            distances[$0, default: .max] < distances[$1, default: .max]
+        }
+        for point in pointsInGrid(grid) {
+            queue.enqueue(point)
+        }
         
-        while let node = currentNode {
+        while let node = queue.dequeue() {
+            guard node != target else { break }
+            
             let neighbours: Set<Point> = [
                 .init(x: node.x + 1, y: node.y),
                 .init(x: node.x, y: node.y + 1)
@@ -62,35 +67,46 @@ enum Day15 {
             }
             
             for neighbour in neighbours {
-                guard unvisited.contains(neighbour) else { continue }
+                guard let index = queue.index(of: neighbour) else { continue }
                 
                 let value = lookupValue(in: grid, at: neighbour)
                 let distanceThroughCurrent = currentNodeDistance + value
-                
-                if let currentNeighbourDistance = distances[neighbour] {
-                    if distanceThroughCurrent < currentNeighbourDistance {
-                        distances[neighbour] = distanceThroughCurrent
-                    }
-                } else {
+
+                if distanceThroughCurrent < distances[neighbour, default: .max] {
                     distances[neighbour] = distanceThroughCurrent
+                    queue.changePriority(index: index, value: neighbour)
                 }
-            }
-            
-            unvisited.remove(node)
-            
-            let nextNode = unvisited.sorted {
-                distances[$0, default: .max] < distances[$1, default: .max]
-            }.first!
-            
-            if nextNode == target {
-                currentNode = nil
-            } else {
-                currentNode = nextNode
             }
         }
         
         return distances[target]!
     }
     
+    static func extrapolateFullGrid(from tile: Grid) -> Grid {
+        // converts a 1 tile grid to a 5x1 tile grid
+        let extrapolateCols: (Grid) -> Grid = { tile in
+            tile.map { row in
+                (0..<5).flatMap { tileX in
+                    row.map { increaseRisk($0, by: tileX) }
+                }
+            }
+        }
+        // converts a 5x1 tile grid to a 5x5 tile grid
+        let extrapolateRows: (Grid) -> Grid = { tile in
+            (0..<5).flatMap { tileY in
+                tile.map { row in
+                    row.map { increaseRisk($0, by: tileY) }
+                }
+            }
+        }
+        return extrapolateCols(extrapolateRows(tile))
+    }
+    
+    static func increaseRisk(_ risk: Int, by increase: Int) -> Int {
+        let newRisk = risk + increase
+        return (newRisk <= 9) ? newRisk : newRisk - 9
+    }
+    
     static let partOne = pipe(parseInput, findShortestDistance)
+    static let partTwo = pipe(parseInput, extrapolateFullGrid, findShortestDistance)
 }
