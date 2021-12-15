@@ -53,20 +53,14 @@ enum Day15 {
         }
         queue.enqueue(start)
         
-        var nodesVisited: Int = 0
-        
         while let node = queue.dequeue() {
             guard node != target else { break }
             
-            nodesVisited += 1 // just for progress reporting
-            
-            if nodesVisited % 10000 == 0 {
-                print("Points visited: \(nodesVisited)")
-            }
-            
             let neighbours: Set<Point> = [
                 .init(x: node.x + 1, y: node.y),
-                .init(x: node.x, y: node.y + 1)
+                .init(x: node.x, y: node.y + 1),
+                .init(x: node.x - 1, y: node.y),
+                .init(x: node.x, y: node.y - 1)
             ]
             
             guard let currentNodeDistance = distances[node] else {
