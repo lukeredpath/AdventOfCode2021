@@ -1506,4 +1506,62 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 14 (Part 2) answer: \(result)")
     }
+    
+    func test15_Part1_GridHelpers() {
+        let expectedPoints: Set<Day15.Point> = [
+            .init(x: 0, y: 0),
+            .init(x: 1, y: 0),
+            .init(x: 2, y: 0),
+            .init(x: 0, y: 1),
+            .init(x: 1, y: 1),
+            .init(x: 2, y: 1),
+            .init(x: 0, y: 2),
+            .init(x: 1, y: 2),
+            .init(x: 2, y: 2)
+        ]
+        
+        XCTAssertNoDifference(
+            Day15.pointsInGrid(width: 3, height: 3),
+            expectedPoints
+        )
+        
+        let grid = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8]
+        ]
+        
+        XCTAssertNoDifference(
+            Day15.pointsInGrid(grid),
+            expectedPoints
+        )
+        
+        XCTAssertEqual(5, Day15.lookupValue(in: grid, at: .init(x: 2, y: 1)))
+    }
+    
+    func test15_Part1_ShortestPath() {
+        let inputGrid = """
+        1163751742
+        1381373672
+        2136511328
+        3694931569
+        7463417111
+        1319128137
+        1359912421
+        3125421639
+        1293138521
+        2311944581
+        """
+        
+        let grid = Day15.parseInput(inputGrid)
+        
+        XCTAssertEqual(10, grid.count)
+        XCTAssertEqual(40, Day15.findShortestDistance(in: grid))
+    }
+    
+    func test15_Part1_Solution() throws {
+        let result = try XCTUnwrap(Day15.partOne(input_15))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 15 (Part 1) answer: \(result)")
+    }
 }
