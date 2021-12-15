@@ -44,18 +44,25 @@ enum Day15 {
     
     static func findShortestDistance(in grid: Grid) -> Int {
         // dijktstra
+        let allPoints = pointsInGrid(grid)
         let start = Point(x: 0, y: 0)
         let target = Point(x: grid[0].count - 1, y: grid.count - 1)
         var distances: [Point: Int] = [start: 0]
         var queue = PriorityQueue<Point> {
             distances[$0, default: .max] < distances[$1, default: .max]
         }
-        for point in pointsInGrid(grid) {
-            queue.enqueue(point)
-        }
+        queue.enqueue(start)
+        
+        var nodesVisited: Int = 0
         
         while let node = queue.dequeue() {
             guard node != target else { break }
+            
+            nodesVisited += 1 // just for progress reporting
+            
+            if nodesVisited % 10000 == 0 {
+                print("Points visited: \(nodesVisited)")
+            }
             
             let neighbours: Set<Point> = [
                 .init(x: node.x + 1, y: node.y),
@@ -67,14 +74,19 @@ enum Day15 {
             }
             
             for neighbour in neighbours {
-                guard let index = queue.index(of: neighbour) else { continue }
+                guard allPoints.contains(neighbour) else { continue }
                 
                 let value = lookupValue(in: grid, at: neighbour)
                 let distanceThroughCurrent = currentNodeDistance + value
 
                 if distanceThroughCurrent < distances[neighbour, default: .max] {
                     distances[neighbour] = distanceThroughCurrent
-                    queue.changePriority(index: index, value: neighbour)
+                    
+                    if let index = queue.index(of: neighbour) {
+                        queue.changePriority(index: index, value: neighbour)
+                    } else {
+                        queue.enqueue(neighbour)
+                    }
                 }
             }
         }
