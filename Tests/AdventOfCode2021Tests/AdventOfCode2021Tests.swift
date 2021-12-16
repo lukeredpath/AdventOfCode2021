@@ -1629,4 +1629,27 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 15 (Part 2) answer: \(result)")
     }
+    
+    func test16_Part1_HexToBin() {
+        XCTAssertEqual("101010111100", Day16.hexStringToBinaryString("ABC"))
+    }
+    
+    func test16_Part1_ParsingExample() throws {
+        let example = "110100101111111000101000"
+        
+        var input = example[...]
+        XCTAssertEqual(6, Day16.packetVersion.parse(&input))
+        XCTAssertEqual(4, Day16.packetTypeID.parse(&input))
+        XCTAssertEqual(["0", "1", "1", "1"], Day16.insideGroup.parse(&input))
+        XCTAssertEqual(["1", "1", "1", "0"], Day16.insideGroup.parse(&input))
+        XCTAssertEqual(["0", "1", "0", "1"], Day16.finalGroup.parse(&input))
+        XCTAssertEqual("000", input, "Should be left with zero padding")
+        XCTAssertEqual(["0", "0", "0"], Day16.zeroPadding.parse(&input))
+        XCTAssertEqual("", input, "Input should be fully consumed")
+        
+        let packet = try XCTUnwrap(Day16.packet.parse(example))
+        XCTAssertEqual(6, packet.version)
+        XCTAssertEqual(4, packet.typeID)
+        XCTAssertEqual(2021, packet.value)
+    }
 }
