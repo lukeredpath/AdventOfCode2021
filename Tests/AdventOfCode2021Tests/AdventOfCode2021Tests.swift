@@ -1,5 +1,6 @@
 import XCTest
 import CustomDump
+import Parsing
 
 @testable import AdventOfCode2021
 
@@ -1634,7 +1635,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssertEqual("101010111100", Day16.hexStringToBinaryString("ABC"))
     }
     
-    func test16_Part1_ParsingExample() throws {
+    func test16_Part1_ParsingLiteralPackets() throws {
         let example = "110100101111111000101000"
         
         var input = example[...]
@@ -1647,9 +1648,92 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssertEqual(["0", "0", "0"], Day16.zeroPadding.parse(&input))
         XCTAssertEqual("", input, "Input should be fully consumed")
         
-        let packet = try XCTUnwrap(Day16.packet.parse(example))
-        XCTAssertEqual(6, packet.version)
-        XCTAssertEqual(4, packet.typeID)
-        XCTAssertEqual(2021, packet.value)
+        input = example[...]
+        let packet = try XCTUnwrap(Day16.packet.parse(&input))
+        XCTAssertEqual(6, packet.header.version)
+        XCTAssertEqual(4, packet.header.typeID)
+        XCTAssertEqual(.literal(2021), packet.value)
+        XCTAssertEqual("", input, "Input should be fully consumed")
+    }
+    
+    func test16_Part1_MultipleLiteralPacketsWithZeroPadding() throws {
+        // This represents an 11 and 16  bit packet:
+        // 1. 110-100-01010
+        // 2. 0101001000100100
+        let example = "110100010100101001000100100"
+        
+        let packets = try XCTUnwrap(Many(Day16.packet).parse(example))
+    
+        XCTAssertEqual(2, packets.count)
+        
+        XCTAssertNoDifference(
+            [
+                Day16.Packet(header: (6, 4), value: .literal(10)),
+                Day16.Packet(header: (2, 4), value: .literal(20)),
+            ],
+            packets
+        )
+    }
+    
+    func test16_Part2_ParsingOperatorPackets() throws {
+        let example1 = "00111000000000000110111101000101001010010001001000000000"
+        
+        var input = example1[...]
+        let header1 = try XCTUnwrap(Day16.packetHeader.parse(&input))
+        XCTAssertEqual(1, header1.version)
+        XCTAssertEqual(6, header1.typeID)
+        
+        let packet1 = try XCTUnwrap(Day16.operatorPacket(header: header1).parse(&input))
+
+        XCTAssertNoDifference(
+            .operator([
+                Day16.Packet(header: (6, 4), value: .literal(10)),
+                Day16.Packet(header: (2, 4), value: .literal(20)),
+            ]),
+            packet1.value
+        )
+        
+        let example2 = "11101110000000001101010000001100100000100011000001100000"
+        input = example2[...]
+        let header2 = try XCTUnwrap(Day16.packetHeader.parse(&input))
+        XCTAssertEqual(7, header2.version)
+        XCTAssertEqual(3, header2.typeID)
+        
+        let packet2 = try XCTUnwrap(Day16.operatorPacket(header: header2).parse(&input))
+        XCTAssertEqual(
+            .operator([
+                Day16.Packet(header: (2, 4), value: .literal(1)),
+                Day16.Packet(header: (4, 4), value: .literal(2)),
+                Day16.Packet(header: (1, 4), value: .literal(3))
+            ]),
+            packet2.value
+        )
+    }
+    
+    func testDay16_SumPacketVersions() {
+        let packet = Day16.Packet(
+            header: (version: 1, typeID: 1),
+            value: .operator([
+                .init(
+                    header: (version: 3, typeID: 4),
+                    value: .literal(1)
+                ),
+                .init(
+                    header: (version: 5, typeID: 1),
+                    value: .operator([
+                        .init(
+                            header: (version: 2, typeID: 4),
+                            value: .literal(2)
+                        ),
+                        .init(
+                            header: (version: 8, typeID: 4),
+                            value: .literal(3)
+                        )
+                    ])
+                )
+            ])
+        )
+        
+        XCTAssertEqual(19, Day16.sumPacketVersions(packet: packet))
     }
 }
