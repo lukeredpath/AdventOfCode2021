@@ -28,11 +28,6 @@ enum Day16 {
     
     // MARK: - Utilities
     
-    static func hexStringToBinaryString(_ hexString: String) -> String? {
-        guard let intValue = Int(hexString, radix: 16) else { return nil }
-        return String(intValue, radix: 2)
-    }
-    
     static let binaryStringToInt: (String) -> Int? = with(
         2, flip(curry(Int.init(_:radix:)))
     )
@@ -42,6 +37,16 @@ enum Day16 {
     }
     
     // MARK: - Parsing
+    
+    static let zeroPaddedByteFromHex = Prefix<Substring>(1)
+        .compactMap { Int($0, radix: 16) }
+        .map { intValue -> String in
+            let byteString = String(intValue, radix: 2)
+            let padding = String(repeating: "0", count: 4 - byteString.count)
+            return padding + byteString
+        }
+        
+    static let packetBytes = Many(zeroPaddedByteFromHex).map { $0.joined()[...] }
     
     static let zero = Prefix<Substring>(1, while: { $0 == "0" })
 
@@ -120,7 +125,15 @@ enum Day16 {
             }
         }
     
-    // MARK: Packet Calculations
+    static func parseInput(_ hexInputString: String) -> Packet {
+        var input = hexInputString[...]
+        guard let packet = packetBytes.pipe(packet).parse(&input) else {
+            fatalError("Could not parse binary input string!")
+        }
+        return packet
+    }
+    
+    // MARK: - Packet Calculations
     
     static func sumPacketVersions(packet: Packet) -> Int {
         switch packet.value {
@@ -132,5 +145,9 @@ enum Day16 {
             }
         }
     }
+    
+    // MARK: - Solutions
+    
+    static let partOne = pipe(parseInput, sumPacketVersions)
 }
 

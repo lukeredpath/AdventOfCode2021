@@ -1632,7 +1632,13 @@ final class AdventOfCode2021Tests: XCTestCase {
     }
     
     func test16_Part1_HexToBin() {
-        XCTAssertEqual("101010111100", Day16.hexStringToBinaryString("ABC"))
+        XCTAssertEqual("101010111100", Day16.packetBytes.parse("ABC"))
+
+        // Make sure we can also convert long strings with zero padded values
+        XCTAssertEqual(
+            "100010100000000001001010100000000001101010000000000000101111010001111000",
+            Day16.packetBytes.parse("8A004A801A8002F478")
+        )
     }
     
     func test16_Part1_ParsingLiteralPackets() throws {
@@ -1735,5 +1741,12 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
         
         XCTAssertEqual(19, Day16.sumPacketVersions(packet: packet))
+    }
+    
+    func testDay16_Part1_Examples() {
+        XCTAssertEqual(16, Day16.partOne("8A004A801A8002F478"))
+        XCTAssertEqual(12, Day16.partOne("620080001611562C8802118E34"))
+        XCTAssertEqual(23, Day16.partOne("C0015000016115A2E0802F182340"))
+        XCTAssertEqual(31, Day16.partOne("A0016C880162017C3686B18A3D4780"))
     }
 }
