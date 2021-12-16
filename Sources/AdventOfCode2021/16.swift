@@ -7,18 +7,24 @@ enum Day16 {
     
     struct Packet: Equatable {
         let header: PacketHeader
-        let value: PacketValue
+        let payload: PacketPayload
         
         static func == (lhs: Day16.Packet, rhs: Day16.Packet) -> Bool {
-            lhs.value == rhs.value
+            lhs.payload == rhs.payload
                 && lhs.header.version == rhs.header.version
                 && lhs.header.typeID == rhs.header.typeID
         }
     }
     
-    enum PacketValue: Equatable {
+    indirect enum PacketPayload: Equatable {
         case literal(Int)
-        case `operator`([Packet])
+        case sum([Packet])
+        case product([Packet])
+        case min([Packet])
+        case max([Packet])
+        case greaterThan(Packet, Packet)
+        case lessThan(Packet, Packet)
+        case equalTo(Packet, Packet)
     }
     
     enum LengthType: Equatable {
@@ -92,8 +98,8 @@ enum Day16 {
     
     static func literalPacket(header: PacketHeader) -> AnyParser<Substring, Packet> {
         return groups
-            .map(PacketValue.literal)
-            .map { Packet(header: header, value: $0) }
+            .map(PacketPayload.literal)
+            .map { Packet(header: header, payload: $0) }
             .eraseToAnyParser()
     }
     
@@ -111,8 +117,33 @@ enum Day16 {
                         .eraseToAnyParser()
                 }
             }
-            .map { Packet(header: header, value: .operator($0)) }
+            .compactMap { operatorPacketPaylod(typeID: header.typeID, subPackets: $0) }
+            .map { Packet(header: header, payload: $0) }
             .eraseToAnyParser()
+    }
+    
+    static func operatorPacketPaylod(typeID: Int, subPackets: [Packet]) -> PacketPayload? {
+        switch typeID {
+        case 0:
+            return .sum(subPackets)
+        case 1:
+            return .product(subPackets)
+        case 2:
+            return .min(subPackets)
+        case 3:
+            return .max(subPackets)
+        case 5:
+            guard subPackets.count == 2 else { return nil }
+            return .greaterThan(subPackets[0], subPackets[1])
+        case 6:
+            guard subPackets.count == 2 else { return nil }
+            return .lessThan(subPackets[0], subPackets[1])
+        case 7:
+            guard subPackets.count == 2 else { return nil }
+            return .equalTo(subPackets[0], subPackets[1])
+        default:
+            return nil
+        }
     }
     
     static let packet = packetHeader
@@ -136,14 +167,27 @@ enum Day16 {
     // MARK: - Packet Calculations
     
     static func sumPacketVersions(packet: Packet) -> Int {
-        switch packet.value {
+        switch packet.payload {
         case .literal:
             return packet.header.version
-        case let .operator(packets):
+        case
+            let .sum(packets),
+            let .product(packets),
+            let .min(packets),
+            let .max(packets):
             return packets.reduce(packet.header.version) {
                 $0 + sumPacketVersions(packet: $1)
             }
+        case
+            let .greaterThan(first, second),
+            let .lessThan(first, second),
+            let .equalTo(first, second):
+            return sumPacketVersions(packet: first) + sumPacketVersions(packet: second)
         }
+    }
+    
+    static func evaluatePacket(_ packet: Packet) -> Int {
+        0
     }
     
     // MARK: - Solutions

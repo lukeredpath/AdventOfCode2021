@@ -1652,14 +1652,12 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssertEqual(["0", "1", "0", "1"], Day16.finalGroup.parse(&input))
         XCTAssertEqual("000", input, "Should be left with zero padding")
         XCTAssertEqual(["0", "0", "0"], Day16.zeroPadding.parse(&input))
-//        XCTAssertEqual("", input, "Input should be fully consumed")
         
         input = example[...]
         let packet = try XCTUnwrap(Day16.packet.parse(&input))
         XCTAssertEqual(6, packet.header.version)
         XCTAssertEqual(4, packet.header.typeID)
-        XCTAssertEqual(.literal(2021), packet.value)
-//        XCTAssertEqual("", input, "Input should be fully consumed")
+        XCTAssertEqual(.literal(2021), packet.payload)
     }
     
     func test16_Part1_MultipleLiteralPacketsWithZeroPadding() throws {
@@ -1674,8 +1672,8 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         XCTAssertNoDifference(
             [
-                Day16.Packet(header: (6, 4), value: .literal(10)),
-                Day16.Packet(header: (2, 4), value: .literal(20)),
+                Day16.Packet(header: (6, 4), payload: .literal(10)),
+                Day16.Packet(header: (2, 4), payload: .literal(20)),
             ],
             packets
         )
@@ -1692,11 +1690,11 @@ final class AdventOfCode2021Tests: XCTestCase {
         let packet1 = try XCTUnwrap(Day16.operatorPacket(header: header1).parse(&input))
 
         XCTAssertNoDifference(
-            .operator([
-                Day16.Packet(header: (6, 4), value: .literal(10)),
-                Day16.Packet(header: (2, 4), value: .literal(20)),
-            ]),
-            packet1.value
+            .lessThan(
+                Day16.Packet(header: (6, 4), payload: .literal(10)),
+                Day16.Packet(header: (2, 4), payload: .literal(20))
+            ),
+            packet1.payload
         )
         
         let example2 = "11101110000000001101010000001100100000100011000001100000"
@@ -1707,33 +1705,33 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         let packet2 = try XCTUnwrap(Day16.operatorPacket(header: header2).parse(&input))
         XCTAssertEqual(
-            .operator([
-                Day16.Packet(header: (2, 4), value: .literal(1)),
-                Day16.Packet(header: (4, 4), value: .literal(2)),
-                Day16.Packet(header: (1, 4), value: .literal(3))
+            .max([
+                Day16.Packet(header: (2, 4), payload: .literal(1)),
+                Day16.Packet(header: (4, 4), payload: .literal(2)),
+                Day16.Packet(header: (1, 4), payload: .literal(3))
             ]),
-            packet2.value
+            packet2.payload
         )
     }
     
     func testDay16_SumPacketVersions() {
         let packet = Day16.Packet(
             header: (version: 1, typeID: 1),
-            value: .operator([
+            payload: .sum([
                 .init(
                     header: (version: 3, typeID: 4),
-                    value: .literal(1)
+                    payload: .literal(1)
                 ),
                 .init(
                     header: (version: 5, typeID: 1),
-                    value: .operator([
+                    payload: .product([
                         .init(
                             header: (version: 2, typeID: 4),
-                            value: .literal(2)
+                            payload: .literal(2)
                         ),
                         .init(
                             header: (version: 8, typeID: 4),
-                            value: .literal(3)
+                            payload: .literal(3)
                         )
                     ])
                 )
