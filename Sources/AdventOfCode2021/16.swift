@@ -24,7 +24,7 @@ enum Day16 {
         case max([Packet])
         case greaterThan(Packet, Packet)
         case lessThan(Packet, Packet)
-        case equalTo(Packet, Packet)
+        case equal(Packet, Packet)
     }
     
     enum LengthType: Equatable {
@@ -140,7 +140,7 @@ enum Day16 {
             return .lessThan(subPackets[0], subPackets[1])
         case 7:
             guard subPackets.count == 2 else { return nil }
-            return .equalTo(subPackets[0], subPackets[1])
+            return .equal(subPackets[0], subPackets[1])
         default:
             return nil
         }
@@ -181,17 +181,49 @@ enum Day16 {
         case
             let .greaterThan(first, second),
             let .lessThan(first, second),
-            let .equalTo(first, second):
+            let .equal(first, second):
             return sumPacketVersions(packet: first) + sumPacketVersions(packet: second)
         }
     }
     
     static func evaluatePacket(_ packet: Packet) -> Int {
-        0
+        switch packet.payload {
+        case let .sum(packets):
+            return packets.reduce(0) { sum, packet in
+                sum + evaluatePacket(packet)
+            }
+            
+        case let .product(packets):
+            guard packets.count > 1 else {
+                return evaluatePacket(packets[0])
+            }
+            return packets[1...].reduce(evaluatePacket(packets[0])) { product, packet in
+                product * evaluatePacket(packet)
+            }
+            
+        case let .min(packets):
+            return packets.map(evaluatePacket).min()!
+            
+        case let .max(packets):
+            return packets.map(evaluatePacket).max()!
+            
+        case let .literal(value):
+            return value
+            
+        case let .greaterThan(first, second):
+            return evaluatePacket(first) > evaluatePacket(second) ? 1 : 0
+            
+        case let .lessThan(first, second):
+            return evaluatePacket(first) < evaluatePacket(second) ? 1 : 0
+            
+        case let .equal(first, second):
+            return evaluatePacket(first) == evaluatePacket(second) ? 1 : 0
+        }
     }
     
     // MARK: - Solutions
     
     static let partOne = pipe(parseInput, sumPacketVersions)
+    static let partTwo = pipe(parseInput, evaluatePacket)
 }
 

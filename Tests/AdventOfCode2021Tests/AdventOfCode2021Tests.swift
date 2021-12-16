@@ -1753,4 +1753,122 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 16 (Part 1) answer: \(result)")
     }
+    
+    func test16_Part2_PacketEvaluation() {
+        XCTAssertEqual(12,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 0),
+                    payload: .sum([
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2)),
+                        .init(header: (1, 4), payload: .literal(6))
+                    ])
+                ))
+        )
+        XCTAssertEqual(48,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 1),
+                    payload: .product([
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2)),
+                        .init(header: (1, 4), payload: .literal(6))
+                    ])
+                ))
+        )
+        XCTAssertEqual(2,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 2),
+                    payload: .min([
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2)),
+                        .init(header: (1, 4), payload: .literal(6))
+                    ])
+                ))
+        )
+        XCTAssertEqual(6,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 3),
+                    payload: .max([
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2)),
+                        .init(header: (1, 4), payload: .literal(6))
+                    ])
+                ))
+        )
+        XCTAssertEqual(1,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 5),
+                    payload: .greaterThan(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2))
+                    )
+                ))
+        )
+        XCTAssertEqual(0,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 5),
+                    payload: .greaterThan(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(8))
+                    )
+                ))
+        )
+        XCTAssertEqual(0,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 6),
+                    payload: .lessThan(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2))
+                    )
+                ))
+        )
+        XCTAssertEqual(1,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 6),
+                    payload: .lessThan(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(8))
+                    )
+                ))
+        )
+        XCTAssertEqual(0,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 7),
+                    payload: .equal(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(2))
+                    )
+                ))
+        )
+        XCTAssertEqual(1,
+            Day16.evaluatePacket(
+                .init(
+                    header: (version: 1, typeID: 7),
+                    payload: .equal(
+                        .init(header: (1, 4), payload: .literal(4)),
+                        .init(header: (1, 4), payload: .literal(4))
+                    )
+                ))
+        )
+    }
+    
+    func testDay16_Part2_Examples() {
+        XCTAssertEqual(3, Day16.partTwo("C200B40A82"))
+        XCTAssertEqual(54, Day16.partTwo("04005AC33890"))
+        XCTAssertEqual(7, Day16.partTwo("880086C3E88112"))
+        XCTAssertEqual(9, Day16.partTwo("CE00C43D881120"))
+        XCTAssertEqual(1, Day16.partTwo("D8005AC2A8F0"))
+        XCTAssertEqual(0, Day16.partTwo("F600BC2D8F"))
+        XCTAssertEqual(0, Day16.partTwo("9C005AC2F8F0"))
+        XCTAssertEqual(1, Day16.partTwo("9C0141080250320F1802104A08"))
+    }
 }
