@@ -2084,4 +2084,16 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result.y > 0, "Expected non-zero result")
         print("Day 17 (Part 1) answer: \(result.y)")
     }
+    
+    func test17_Part2_Example() {
+        let targetArea = Day17.TargetArea(x: 20...30, y: -10 ... -5)
+        let velocities = Day17.findSuccessfulVelocities(targetArea: targetArea)
+        XCTAssertEqual(velocities.count, 112)
+    }
+    
+    func test17_Part2_Solution() throws {
+        let result = try XCTUnwrap(Day17.partTwo(input_17))
+        XCTAssert(result.count > 0, "Expected non-zero result")
+        print("Day 17 (Part 2) answer: \(result.count)")
+    }
 }

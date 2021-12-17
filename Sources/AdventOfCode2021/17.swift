@@ -88,7 +88,6 @@ enum Day17 {
             )
             
             positions.append(currentPosition)
-//            print("Moved to \(currentPosition)")
             
             if isWithinTargetArea(position: currentPosition, targetArea: targetArea) {
                 return (true, positions, currentVelocity)
@@ -125,5 +124,27 @@ enum Day17 {
         return heighestPosition
     }
     
+    static func findSuccessfulVelocities(targetArea: TargetArea) -> [Velocity] {
+        // lets choose some artificial bounds for brute forcing.
+        let xRange = (0...500)
+        let yRange = (-300 ... 300)
+        
+        var velocities: [Velocity] = []
+        
+        for x in xRange {
+            for y in yRange {
+                let (onTarget, _, _) = performMovement(
+                    towards: targetArea,
+                    initialVelocity: (x: x, y: y)
+                )
+                if onTarget {
+                    velocities.append((x: x, y: y))
+                }
+            }
+        }
+        return velocities
+    }
+    
     static let partOne = pipe(parseInput, findMostStylishVelocity)
+    static let partTwo = pipe(parseInput, findSuccessfulVelocities)
 }
