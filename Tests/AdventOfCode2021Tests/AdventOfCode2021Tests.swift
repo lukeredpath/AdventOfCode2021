@@ -1989,12 +1989,6 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
         // Check positions below and to the left (fallen short)
         XCTAssert(
-            Day17.hasFallenShort(
-                position: (x: 0, y: -11),
-                targetArea: (x: 5...10, y: -10 ... -5)
-            )
-        )
-        XCTAssert(
             Day17.hasMissed(
                 position: (x: 0, y: -11),
                 targetArea: (x: 5...10, y: -10 ... -5)
@@ -2002,24 +1996,12 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
         // Check positions below but within the x (passed through)
         XCTAssert(
-            Day17.hasPassedThrough(
-                position: (x: 8, y: -11),
-                targetArea: (x: 5...10, y: -10 ... -5)
-            )
-        )
-        XCTAssert(
             Day17.hasMissed(
                 position: (x: 8, y: -11),
                 targetArea: (x: 5...10, y: -10 ... -5)
             )
         )
         // Check positions that have exceeded the target x (overshot)
-        XCTAssert(
-            Day17.hasOvershot(
-                position: (x: 12, y: -7),
-                targetArea: (x: 5...10, y: -10 ... -5)
-            )
-        )
         XCTAssert(
             Day17.hasMissed(
                 position: (x: 12, y: -7),

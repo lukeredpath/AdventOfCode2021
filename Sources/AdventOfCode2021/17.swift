@@ -41,21 +41,9 @@ enum Day17 {
         position: Position,
         targetArea: TargetArea
     ) -> Bool {
-        hasOvershot(position: position, targetArea: targetArea)
-            || hasFallenShort(position: position, targetArea: targetArea)
-            || hasPassedThrough(position: position, targetArea: targetArea)
-    }
-    
-    static func hasOvershot(position: Position, targetArea: TargetArea) -> Bool {
         position.x > targetArea.x.upperBound
-    }
-    
-    static func hasFallenShort(position: Position, targetArea: TargetArea) -> Bool {
-        position.y < targetArea.y.lowerBound && position.x < targetArea.x.lowerBound
-    }
-    
-    static func hasPassedThrough(position: Position, targetArea: TargetArea) -> Bool {
-        position.y < targetArea.y.lowerBound && targetArea.x.contains(position.x)
+            || position.y < targetArea.y.lowerBound && position.x < targetArea.x.lowerBound
+            || position.y < targetArea.y.lowerBound && targetArea.x.contains(position.x)
     }
     
     static func performMovementStep(
