@@ -1714,7 +1714,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
     }
     
-    func testDay16_SumPacketVersions() {
+    func test16_SumPacketVersions() {
         let packet = Day16.Packet(
             header: (version: 1, typeID: 1),
             payload: .sum([
@@ -1861,7 +1861,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         )
     }
     
-    func testDay16_Part2_Examples() {
+    func test16_Part2_Examples() {
         XCTAssertEqual(3, Day16.partTwo("C200B40A82"))
         XCTAssertEqual(54, Day16.partTwo("04005AC33890"))
         XCTAssertEqual(7, Day16.partTwo("880086C3E88112"))
@@ -1876,5 +1876,212 @@ final class AdventOfCode2021Tests: XCTestCase {
         let result = try XCTUnwrap(Day16.partTwo(input_16))
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 16 (Part 2) answer: \(result)")
+    }
+    
+    func test17_Part1_Movement() {
+        let start = Day17.Position(x: 0, y: 0)
+        let velocity = Day17.Velocity(x: 2, y: 10)
+        
+        var (newPosition, newVelocity) = Day17.performMovementStep(
+            from: start,
+            velocity: velocity
+        )
+        
+        XCTAssertEqual(newPosition.x, 2)
+        XCTAssertEqual(newPosition.y, 10)
+        XCTAssertEqual(newVelocity.x, 1)
+        XCTAssertEqual(newVelocity.y, 9)
+        
+        (newPosition, newVelocity) = Day17.performMovementStep(
+            from: newPosition,
+            velocity: newVelocity
+        )
+        
+        XCTAssertEqual(newPosition.x, 3)
+        XCTAssertEqual(newPosition.y, 19)
+        XCTAssertEqual(newVelocity.x, 0)
+        XCTAssertEqual(newVelocity.y, 8)
+        
+        (newPosition, newVelocity) = Day17.performMovementStep(
+            from: newPosition,
+            velocity: newVelocity
+        )
+        
+        XCTAssertEqual(newPosition.x, 3)
+        XCTAssertEqual(newPosition.y, 27)
+        XCTAssertEqual(newVelocity.x, 0)
+        XCTAssertEqual(newVelocity.y, 7)
+        
+        (newPosition, newVelocity) = Day17.performMovementStep(
+            from: newPosition,
+            velocity: (x: -2, y: 0)
+        )
+        
+        XCTAssertEqual(newPosition.x, 1)
+        XCTAssertEqual(newPosition.y, 27)
+        XCTAssertEqual(newVelocity.x, -1)
+        XCTAssertEqual(newVelocity.y, -1)
+        
+        (newPosition, newVelocity) = Day17.performMovementStep(
+            from: newPosition,
+            velocity: newVelocity
+        )
+        
+        XCTAssertEqual(newPosition.x, 0)
+        XCTAssertEqual(newPosition.y, 26)
+        XCTAssertEqual(newVelocity.x, 0)
+        XCTAssertEqual(newVelocity.y, -2)
+    }
+    
+    func test17_Part1_Parsing() {
+        let inputString = "target area: x=20..30, y=-10..-5"
+        let targetArea = Day17.parseInput(inputString)
+        XCTAssertEqual(targetArea.x, 20 ... 30)
+        XCTAssertEqual(targetArea.y, -10 ... -5)
+    }
+    
+    func test17_Part1_TargetAreaCheck() {
+        XCTAssert(
+            Day17.isWithinTargetArea(
+                position: (x: 10, y: 10),
+                targetArea: (x: (10...13), y: (8...13))
+            )
+        )
+        XCTAssert(
+            Day17.isWithinTargetArea(
+                position: (x: 0, y: 2),
+                targetArea: (x: (-2...2), y: (0...2))
+            )
+        )
+        XCTAssertFalse(
+            Day17.isWithinTargetArea(
+                position: (x: 0, y: 2),
+                targetArea: (x: (-5 ... -1), y: (0...3))
+            )
+        )
+        XCTAssertFalse(
+            Day17.isWithinTargetArea(
+                position: (x: -3, y: 5),
+                targetArea: (x: (-5 ... -1), y: (0...3))
+            )
+        )
+    }
+    
+    func testDay17_Part1_BoundsCheck() {
+        // Check positions above or to the left of the target area
+        XCTAssertFalse(
+            Day17.hasMissed(
+                position: (x: 3, y: 0),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        XCTAssertFalse(
+            Day17.hasMissed(
+                position: (x: 6, y: 0),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        XCTAssertFalse(
+            Day17.hasMissed(
+                position: (x: 0, y: -8),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        // Check positions below and to the left (fallen short)
+        XCTAssert(
+            Day17.hasFallenShort(
+                position: (x: 0, y: -11),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        XCTAssert(
+            Day17.hasMissed(
+                position: (x: 0, y: -11),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        // Check positions below but within the x (passed through)
+        XCTAssert(
+            Day17.hasPassedThrough(
+                position: (x: 8, y: -11),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        XCTAssert(
+            Day17.hasMissed(
+                position: (x: 8, y: -11),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        // Check positions that have exceeded the target x (overshot)
+        XCTAssert(
+            Day17.hasOvershot(
+                position: (x: 12, y: -7),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        XCTAssert(
+            Day17.hasMissed(
+                position: (x: 12, y: -7),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+        // Check on target position
+        XCTAssertFalse(
+            Day17.hasMissed(
+                position: (x: 8, y: -7),
+                targetArea: (x: 5...10, y: -10 ... -5)
+            )
+        )
+    }
+    
+    func testDay17_Part1_VelocityCalculationExamples() {
+        let targetArea = Day17.TargetArea(x: 20...30, y: -10 ... -5)
+
+        var (onTarget, positions, _) = Day17.performMovement(
+            towards: targetArea,
+            initialVelocity: Day17.Velocity(x: 7, y: 2)
+        )
+        
+        XCTAssert(onTarget)
+        XCTAssertEqual(positions.last!.x, 28)
+        XCTAssertEqual(positions.last!.y, -7)
+        
+        (onTarget, positions, _) = Day17.performMovement(
+            towards: targetArea,
+            initialVelocity: Day17.Velocity(x: 6, y: 3)
+        )
+        
+        XCTAssert(onTarget)
+        XCTAssertEqual(positions.last!.x, 21)
+        XCTAssertEqual(positions.last!.y, -9)
+        
+        (onTarget, _, _) = Day17.performMovement(
+            towards: targetArea,
+            initialVelocity: Day17.Velocity(x: 17, y: -4)
+        )
+        
+        XCTAssertFalse(onTarget)
+        
+        (onTarget, positions, _) = Day17.performMovement(
+            towards: targetArea,
+            initialVelocity: Day17.Velocity(x: 6, y: 9)
+        )
+        let heighestPosition = Day17.findHeighestPosition(in: positions)
+        
+        XCTAssert(onTarget)
+        XCTAssertEqual(heighestPosition.y, 45)
+    }
+    
+    func test17_Part1_Example() {
+        let targetArea = Day17.TargetArea(x: 20...30, y: -10 ... -5)
+        let heighestPosition = Day17.findMostStylishVelocity(targetArea: targetArea)
+        XCTAssertEqual(heighestPosition.y, 45)
+    }
+    
+    func test17_Part1_Solution() throws {
+        let result = try XCTUnwrap(Day17.partOne(input_17))
+        XCTAssert(result.y > 0, "Expected non-zero result")
+        print("Day 17 (Part 1) answer: \(result.y)")
     }
 }
