@@ -2078,4 +2078,32 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result.count > 0, "Expected non-zero result")
         print("Day 17 (Part 2) answer: \(result.count)")
     }
+    
+    func test18_Part1_AddNumbers() {
+        let a: Day18.Number = [1, 2]
+        let b: Day18.Number = [3, 4]
+
+        XCTAssertEqual(
+            Day18.add(a, b),
+            [.pair([1, 2]), .pair([3, 4])]
+        )
+    }
+    
+    func test18_Part1_SplitNumber() {
+        XCTAssertEqual(Day18.split(0), [0, 0])
+        XCTAssertEqual(Day18.split(10), [5, 5])
+        XCTAssertEqual(Day18.split(11), [5, 6])
+        XCTAssertEqual(Day18.split(15), [7, 8])
+    }
+    
+    func test18_Part1_SimpleReduction() {
+        let numbers: [Day18.Number] = [
+            [1, 2],
+            [3, 4],
+            [5, [6, 7]]
+        ]
+        let reduced = Day18.reduce(numbers)
+        
+        XCTAssertEqual(reduced, [[[1, 2], [3, 4]], [5, [6, 7]]])
+    }
 }
