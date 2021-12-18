@@ -2085,7 +2085,7 @@ final class AdventOfCode2021Tests: XCTestCase {
 
         XCTAssertEqual(
             Day18.add(a, b),
-            [.pair([1, 2]), .pair([3, 4])]
+            [.number([1, 2]), .number([3, 4])]
         )
     }
     
@@ -2102,8 +2102,106 @@ final class AdventOfCode2021Tests: XCTestCase {
             [3, 4],
             [5, [6, 7]]
         ]
-        let reduced = Day18.reduce(numbers)
         
-        XCTAssertEqual(reduced, [[[1, 2], [3, 4]], [5, [6, 7]]])
+        XCTAssertNoDifference(
+            Day18.reduceMany(numbers),
+            [[[1, 2], [3, 4]], [5, [6, 7]]]
+        )
+    }
+    
+    func test18_Part1_ReduceWithSplits() {
+        let number: [Day18.Number] = [[[1, 11], 2], [3, [15, 4]]]
+        
+        XCTAssertNoDifference(
+            Day18.reduceMany(number),
+            [[[1, [5, 6]], 2], [3, [[7, 8], 4]]]
+        )
+    }
+    
+    func test18_Part1_ReduceWithExplode() {
+        XCTAssertNoDifference(
+            Day18.reduce([[[[[9, 8], 1], 2], 3], [4, 5]]),
+            [[[[0, 9], 2], 3], [4, 5]]
+        )
+
+        XCTAssertNoDifference(
+            Day18.reduce([7, [6, [5, [4, [3, 2]]]]]),
+            [7, [6, [5, [7, 0]]]]
+        )
+
+        XCTAssertNoDifference(
+            Day18.reduce([[6, [5, [4, [3, 2]]]], 1]),
+            [[6, [5, [7, 0]]], 3]
+        )
+        
+        XCTAssertNoDifference(
+            Day18.reduce([[3, [2, [1, [7, 3]]]], [6, [5, [4, [3, 2]]]]]),
+            [[3, [2, [8, 0]]], [9, [5, [7, 0]]]]
+        )
+    }
+    
+    func test18_Part1_ExampleReduce() {
+        let result = Day18.reduceMany([
+            [[[[4,3],4],4],[7,[[8,4],9]]],
+            [1,1]
+        ])
+        
+        XCTAssertNoDifference(
+            result,
+            [[[[0,7],4],[[7,8],[6,0]]],[8,1]]
+        )
+    }
+    
+    func test18_Part1_CalculateMagnitude() {
+        XCTAssertEqual(
+            Day18.magnitudeOf([[1,2],[[3,4],5]]),
+            143
+        )
+        XCTAssertEqual(
+            Day18.magnitudeOf([[[[0,7],4],[[7,8],[6,0]]],[8,1]]),
+            1384
+        )
+        XCTAssertEqual(
+            Day18.magnitudeOf([[[[5,0],[7,4]],[5,5]],[6,6]]),
+            1137
+        )
+    }
+    
+    func test18_Part1_Parsing() {
+        XCTAssertNoDifference(
+            Day18.number.parse("[1,2]"),
+            [1, 2]
+        )
+        XCTAssertNoDifference(
+            Day18.number.parse("[[1,2],3]"),
+            [[1, 2], 3]
+        )
+        XCTAssertNoDifference(
+            Day18.number.parse("[[1,9],[8,5]]"),
+            [[1,9],[8,5]]
+        )
+    }
+    
+    func test18_Part1_Example() {
+        let input = """
+        [[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+        [[[5,[2,8]],4],[5,[[9,9],0]]]
+        [6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
+        [[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
+        [[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]
+        [[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]
+        [[[[5,4],[7,7]],8],[[8,3],8]]
+        [[9,3],[[9,9],[6,[4,9]]]]
+        [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
+        [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]
+        """
+        
+        XCTAssertEqual(Day18.partOne(input), 4140)
+    }
+    
+    func test18_Part1_Solution() throws {
+        let result = try XCTUnwrap(Day18.partOne(input_18))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 18 (Part 1) answer: \(result)")
     }
 }
