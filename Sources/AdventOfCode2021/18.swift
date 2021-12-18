@@ -7,7 +7,7 @@ enum Day18 {
     typealias Number = Pair<Element>
     typealias Explosion = (lhs: Int, rhs: Int, replacement: Element)
     
-    enum Element: Equatable {
+    enum Element: Equatable, Hashable {
         case regular(Int)
         indirect case number(Number)
     }
@@ -218,9 +218,25 @@ enum Day18 {
         (magnitudeOf(number.a) * 3) + (magnitudeOf(number.b) * 2)
     }
     
+    static func findLargestMagnitude(from numbers: [Number]) -> Int {
+        pairPermuationsOf(numbers).map { pair in
+            calculateMagnitude(of: reduceMany([pair.a, pair.b]))
+        }.max() ?? 0
+    }
+    
+    static func pairPermuationsOf(_ numbers: [Number]) -> [Pair<Number>] {
+        let numberSet = Set(numbers)
+        return numberSet.flatMap { number in
+            numberSet.subtracting([number]).map { otherNumber in
+                return Pair(number, otherNumber)
+            }
+        }
+    }
+    
     // MARK: - Solutions
     
     static let partOne = pipe(parseInput, reduceMany, calculateMagnitude)
+    static let partTwo = pipe(parseInput, findLargestMagnitude)
 }
 
 extension Day18.Element: ExpressibleByIntegerLiteral {
