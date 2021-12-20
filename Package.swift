@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "AdventOfCode2021",
-    platforms: [.iOS("15.0")],
+    platforms: [.iOS("15.0"), .macOS(.v11)],
     products: [
         .library(
             name: "AdventOfCode2021",
