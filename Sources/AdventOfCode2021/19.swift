@@ -193,7 +193,6 @@ enum Day19 {
         let scannerOverlaps = overlaps.filter { overlap in
             overlap.first == scannerNumber
         }
-        print("Counted: \(alreadyCounted)")
         return scannerOverlaps.reduce(scanner.beacons) { beacons, overlap in
             let secondBeacons = findBeacons(
                 from: overlap.second,
@@ -224,17 +223,67 @@ enum Day19 {
         )
         // also find any that we cannot be found by following
         // scanners directly from zero.
-        let notCounted = Set(input.map(\.number)).subtracting(counted)
-        let allBeacons = notCounted.reduce(beaconsFromZero) { beacons, number in
-            beacons.union(findBeacons(
-                from: number,
-                input: input,
-                overlaps: overlaps,
-                alreadyCounted: &counted
-            ))
-        }
+//        let notCounted = Set(input.map(\.number)).subtracting(counted)
+//        let allBeacons = notCounted.reduce(beaconsFromZero) { beacons, number in
+//            beacons.union(findBeacons(
+//                from: number,
+//                input: input,
+//                overlaps: overlaps,
+//                alreadyCounted: &counted
+//            ))
+//        }
         assert(input.count == counted.count)
-        return allBeacons.count
+        return beaconsFromZero.count
+    }
+    
+    static func calculateScannerPositions(input: Input) -> [Int: Coord3D] {
+//        var positions: [Int: Coord3D] = [:]
+        let overlaps = findOverlappingScanners(input: input)
+        var calculated: [Int] = []
+        
+        return calculateNextScannerPosition(
+            from: (0, .init(x: 0, y: 0, z: 0), .init(x: 0, y: 0, z: 0)),
+            overlaps: overlaps,
+            alreadyCalculated: &calculated
+        )
+        assert(calculated.count == input.count)
+        
+//        return positions
+    }
+    
+    static func calculateNextScannerPosition(
+        from scanner: (number: Int, position: Coord3D, rotation: Coord3D),
+        overlaps: [Overlap],
+        alreadyCalculated: inout [Int]
+    ) -> [Int: Coord3D] {
+        guard !alreadyCalculated.contains(scanner.number) else { return [:] }
+        
+        var positions: [Int: Coord3D] = [scanner.0: scanner.1]
+        
+        alreadyCalculated.append(scanner.number)
+        
+        let scannerOverlaps = overlaps.filter { overlap in
+            overlap.first == scanner.0
+        }
+        for overlap in scannerOverlaps {
+//            let rotated = rotatePoint(overlap.translation, by: scanner.rotation)
+            let position = rotatePoint(Coord3D(
+                x: scanner.position.x + overlap.translation.x,
+                y: scanner.position.y + overlap.translation.y,
+                z: scanner.position.z + overlap.translation.z
+            ), by: scanner.rotation)
+            
+            let nextPositions = calculateNextScannerPosition(
+                from: (overlap.second, position, overlap.rotation),
+                overlaps: overlaps,
+                alreadyCalculated: &alreadyCalculated
+            )
+            for key in nextPositions.keys {
+                let position = nextPositions[key]!
+                positions[key] = rotatePoint(position, by: scanner.rotation)
+            }
+        }
+        return positions
     }
     
     // MARK: - Solutions
