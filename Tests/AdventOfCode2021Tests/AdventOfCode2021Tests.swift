@@ -2683,6 +2683,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         var exampleOutput = ""
         Day20.printGrid(exampleGrid) { exampleOutput += $0 }
+        Day20.printGrid(exampleGrid)
         
         XCTAssertNoDifference(
         """
@@ -2698,11 +2699,13 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         let enhanced = Day20.enhanceGrid(
             exampleGrid,
-            algorithm: algorithm
+            algorithm: algorithm,
+            iteration: 1
         )
         
         var enhancedOutput = ""
         Day20.printGrid(enhanced) { enhancedOutput += $0 }
+        Day20.printGrid(enhanced)
         
         XCTAssertNoDifference(
         """
@@ -2720,11 +2723,13 @@ final class AdventOfCode2021Tests: XCTestCase {
         
         let enhanced2 = Day20.enhanceGrid(
             enhanced,
-            algorithm: algorithm
+            algorithm: algorithm,
+            iteration: 2
         )
         
         var enhancedOutput2 = ""
         Day20.printGrid(enhanced2) { enhancedOutput2 += $0 }
+        Day20.printGrid(enhanced2)
         
         XCTAssertNoDifference(
         """
@@ -2742,9 +2747,18 @@ final class AdventOfCode2021Tests: XCTestCase {
         enhancedOutput2
         )
         
+        XCTAssertEqual(35, Day20.countLitPixels(in: enhanced2))
+        
         Day20.printGrid(enhanced2) {
             print($0, separator: "", terminator: "")
         }
+    }
+    
+    func test20_Part2_Solution() throws {
+        let result = try XCTUnwrap(Day20.partOne(input_20))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 20 (Part 1) answer: \(result)")
+        XCTAssertEqual(result, 5391)
     }
 }
     
