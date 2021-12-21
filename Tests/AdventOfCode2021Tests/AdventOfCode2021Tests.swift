@@ -2782,5 +2782,77 @@ final class AdventOfCode2021Tests: XCTestCase {
         print("Day 20 (Part 2) answer: \(result)")
         XCTAssertEqual(result, 16383)
     }
+    
+    func test20_Part1_Movement() {
+        var player = Day21.Player(name: "one", position: 0, score: 0)
+        
+        player = Day21.move(player: player, rolls: [1, 1, 1])
+        XCTAssertEqual(player.position, 3)
+        XCTAssertEqual(player.score, 3)
+        
+        player = Day21.move(player: player, rolls: [2, 1, 3])
+        XCTAssertEqual(player.position, 9)
+        XCTAssertEqual(player.score, 12)
+        
+        player = Day21.move(player: player, rolls: [5, 1, 2])
+        XCTAssertEqual(player.position, 7)
+        XCTAssertEqual(player.score, 19)
+        
+        player = Day21.move(player: player, rolls: [1, 1, 1])
+        XCTAssertEqual(player.position, 10)
+        XCTAssertEqual(player.score, 29)
+        
+        player = Day21.move(player: player, rolls: [2, 1, 1])
+        XCTAssertEqual(player.position, 4)
+        XCTAssertEqual(player.score, 33)
+        
+        player = Day21.move(player: player, rolls: [20, 5, 3])
+        XCTAssertEqual(player.position, 2)
+        XCTAssertEqual(player.score, 35)
+    }
+    
+    func test20_Part1_ExampleGame() throws {
+        let playerOne = Day21.Player(
+            name: "one",
+            position: 4,
+            score: 0
+        )
+        let playerTwo = Day21.Player(
+            name: "two",
+            position: 8,
+            score: 0
+        )
+        let result = Day21.playGame(
+            players: [playerOne, playerTwo],
+            roll: Day21.deterministicRoll()
+        )
+        XCTAssertEqual("one", result.winner.name)
+        XCTAssertEqual(1000, result.winner.score)
+        
+        let loser = try XCTUnwrap(result.losers.first)
+        XCTAssertEqual("two", loser.name)
+        XCTAssertEqual(745, loser.score)
+        
+        XCTAssertEqual(993, result.rolls)
+        
+        let total = Day21.evaluateGameResult(result)
+        XCTAssertEqual(total, 739785)
+        
+        let exampleInput = """
+        Player 1 starting position: 4
+        Player 2 starting position: 8
+        """
+        
+        let partOneResult = Day21.partOne(exampleInput)
+        
+        XCTAssertEqual(partOneResult, 739785)
+    }
+    
+    func test21_Part1_Solution() throws {
+        let result = try XCTUnwrap(Day21.partOne(input_21))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 21 (Part 1) answer: \(result)")
+        XCTAssertEqual(result, 576600)
+    }
 }
     
