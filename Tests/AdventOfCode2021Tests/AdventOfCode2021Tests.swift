@@ -2754,11 +2754,33 @@ final class AdventOfCode2021Tests: XCTestCase {
         }
     }
     
-    func test20_Part2_Solution() throws {
+    func test20_Part1_Solution() throws {
         let result = try XCTUnwrap(Day20.partOne(input_20))
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 20 (Part 1) answer: \(result)")
         XCTAssertEqual(result, 5391)
+    }
+    
+    func test20_Part2_Example() {
+        let exampleInput = """
+        ..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+        
+        #..#.
+        #....
+        ##..#
+        ..#..
+        ..###
+        """
+        
+        let result = Day20.partTwo(exampleInput)
+        XCTAssertEqual(result, 3351)
+    }
+    
+    func test20_Part2_Solution() throws {
+        let result = try XCTUnwrap(Day20.partTwo(input_20))
+        XCTAssert(result > 0, "Expected non-zero result")
+        print("Day 20 (Part 2) answer: \(result)")
+        XCTAssertEqual(result, 16383)
     }
 }
     

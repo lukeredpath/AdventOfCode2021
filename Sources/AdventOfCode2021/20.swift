@@ -105,12 +105,9 @@ enum Day20 {
         print($0, separator: "", terminator: "")
     }
     
-    static func partOne(_ inputString: String) -> UInt {
-        let input = parseInput(inputString)
-        let grid = (1..<3).reduce(input.image) { grid, iter in
-            printGrid(grid)
-            print("\n")
-            return enhanceGrid(
+    static func enhanceInput(_ input: Input, times: Int) -> UInt {
+        let grid = (1..<times + 1).reduce(input.image) { grid, iter in
+            enhanceGrid(
                 grid,
                 algorithm: input.algorithm,
                 iteration: iter
@@ -118,4 +115,14 @@ enum Day20 {
         }
         return countLitPixels(in: grid)
     }
+    
+    static let partOne = pipe(
+        parseInput,
+        with(2, flip(curry(enhanceInput)))
+    )
+    
+    static let partTwo = pipe(
+        parseInput,
+        with(50, flip(curry(enhanceInput)))
+    )
 }
