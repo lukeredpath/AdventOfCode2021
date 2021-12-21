@@ -67,6 +67,72 @@ enum Day21 {
         }
     }
     
+    typealias WinCounts = (one: UInt, two: UInt)
+    
+    static func diracRolls() -> [[UInt]] {
+        let sides: [UInt] = [1, 2, 3]
+        var rolls: [[UInt]] = []
+        for roll1 in sides {
+            for roll2 in sides {
+                for roll3 in sides {
+                    rolls.append([roll1, roll2, roll3])
+                }
+            }
+        }
+        return rolls
+    }
+    
+    static func performDiracMove(
+        currentPlayer: Player,
+        playerIndex: Int,
+        players: [Player],
+        rolls: [UInt],
+        winCounts: inout WinCounts
+    ) {
+        print("Universe split, win counts: \(winCounts.0), 2: \(winCounts.1)")
+        
+        var players = players
+        let updatedPlayer = move(player: currentPlayer, rolls: rolls)
+        players[playerIndex] = updatedPlayer
+        
+        if updatedPlayer.score >= 21 {
+            if playerIndex == 0 {
+                winCounts.0 += 1
+            } else {
+                winCounts.1 += 1
+            }
+        } else {
+            playDiracGame(
+                players: players,
+                nextPlayerIndex: playerIndex == 0 ? 1 : 0,
+                winCounts: &winCounts
+            )
+        }
+    }
+    
+    static func playDiracGame(
+        players: [Player],
+        nextPlayerIndex: Int = 0,
+        winCounts: inout WinCounts
+    ) {
+        // Every move of 3 die rolls creates 27 new universes
+        for roll in diracRolls() {
+            performDiracMove(
+                currentPlayer: players[nextPlayerIndex],
+                playerIndex: nextPlayerIndex,
+                players: players,
+                rolls: roll,
+                winCounts: &winCounts
+            )
+        }
+    }
+    
+    static func playDiracGame(players: [Player]) -> WinCounts {
+        var winCounts: WinCounts = (0, 0)
+        playDiracGame(players: players, winCounts: &winCounts)
+        return winCounts
+    }
+    
     static func evaluateGameResult(_ result: GameResult) -> UInt {
         let sortedLosers = result.losers.sorted(by: { $0.score < $1.score })
         guard let lowestScoringLoser = sortedLosers.first else {

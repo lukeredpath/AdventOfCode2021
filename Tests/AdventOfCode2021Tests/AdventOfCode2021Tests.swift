@@ -2639,7 +2639,7 @@ final class AdventOfCode2021Tests: XCTestCase {
         30,-46,-14
         """
     
-        let exampleInput = try XCTUnwrap(Day19.parseInput(inputString))
+//        let exampleInput = try XCTUnwrap(Day19.parseInput(inputString))
         
 //        let positions = Day19.calculateScannerPositions(input: exampleInput)
     }
@@ -2853,6 +2853,17 @@ final class AdventOfCode2021Tests: XCTestCase {
         XCTAssert(result > 0, "Expected non-zero result")
         print("Day 21 (Part 1) answer: \(result)")
         XCTAssertEqual(result, 576600)
+    }
+    
+    func test21_Part2_Example() throws {
+        let exampleInput = """
+        Player 1 starting position: 4
+        Player 2 starting position: 8
+        """
+        
+        let players = try XCTUnwrap(Day21.players.parse(exampleInput))
+        
+        let winCounts = Day21.playDiracGame(players: players)
     }
 }
     
