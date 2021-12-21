@@ -1,6 +1,7 @@
 import XCTest
 import CustomDump
 import Parsing
+import simd
 
 @testable import AdventOfCode2021
 
@@ -2640,8 +2641,110 @@ final class AdventOfCode2021Tests: XCTestCase {
     
         let exampleInput = try XCTUnwrap(Day19.parseInput(inputString))
         
-        let positions = Day19.calculateScannerPositions(input: exampleInput)
+//        let positions = Day19.calculateScannerPositions(input: exampleInput)
+    }
+    
+    func testDay20_Calculations() {
+        let exampleGrid: Day20.Grid = [
+            [1,0,0,1,0],
+            [1,0,0,0,0],
+            [1,1,0,0,1],
+            [0,0,1,0,0],
+            [0,0,1,1,1]
+        ]
         
+        let point = Day20.Point(2, 2)
+        
+        XCTAssertEqual(
+            Day20.binaryNumberStringFromPoint(point, in: exampleGrid),
+            "000100010"
+        )
+        XCTAssertEqual(
+            Day20.indexForPoint(point, in: exampleGrid),
+            34
+        )
+    }
+    
+    func testDay20_EnhanceGrid() throws {
+        let algorithmString = """
+        ..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+        
+        """
+        
+        let exampleGrid: Day20.Grid = [
+            [1,0,0,1,0],
+            [1,0,0,0,0],
+            [1,1,0,0,1],
+            [0,0,1,0,0],
+            [0,0,1,1,1]
+        ]
+        
+        let algorithm = try XCTUnwrap(Day20.algorithm.parse(algorithmString))
+        
+        var exampleOutput = ""
+        Day20.printGrid(exampleGrid) { exampleOutput += $0 }
+        
+        XCTAssertNoDifference(
+        """
+        #..#.
+        #....
+        ##..#
+        ..#..
+        ..###
+        
+        """,
+        exampleOutput
+        )
+        
+        let enhanced = Day20.enhanceGrid(
+            exampleGrid,
+            algorithm: algorithm
+        )
+        
+        var enhancedOutput = ""
+        Day20.printGrid(enhanced) { enhancedOutput += $0 }
+        
+        XCTAssertNoDifference(
+        """
+        .##.##.
+        #..#.#.
+        ##.#..#
+        ####..#
+        .#..##.
+        ..##..#
+        ...#.#.
+        
+        """,
+        enhancedOutput
+        )
+        
+        let enhanced2 = Day20.enhanceGrid(
+            enhanced,
+            algorithm: algorithm
+        )
+        
+        var enhancedOutput2 = ""
+        Day20.printGrid(enhanced2) { enhancedOutput2 += $0 }
+        
+        XCTAssertNoDifference(
+        """
+        .......#.
+        .#..#.#..
+        #.#...###
+        #...##.#.
+        #.....#.#
+        .#.#####.
+        ..#.#####
+        ...##.##.
+        ....###..
+        
+        """,
+        enhancedOutput2
+        )
+        
+        Day20.printGrid(enhanced2) {
+            print($0, separator: "", terminator: "")
+        }
     }
 }
     
