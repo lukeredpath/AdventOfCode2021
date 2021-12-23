@@ -246,9 +246,6 @@ enum Day19 {
             overlaps: overlaps,
             alreadyCalculated: &calculated
         )
-        assert(calculated.count == input.count)
-        
-//        return positions
     }
     
     static func calculateNextScannerPosition(
