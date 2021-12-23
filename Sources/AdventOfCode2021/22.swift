@@ -61,18 +61,128 @@ enum Day22 {
         reactor.values.filter { $0 }.count
     }
     
-    static func initializeReactor(steps: [RebootStep]) -> Reactor {
+    static func rebootReactor(steps: [RebootStep]) -> Reactor {
         steps.reduce(into: [:]) { reactor, step in
             performRebootStep(step, on: &reactor)
         }
     }
     
-    static func filterInitializationSteps(_ allSteps: [RebootStep]) -> [RebootStep] {
-        allSteps.filter { step in
-            step.cuboid.x.lowerBound >= -50 && step.cuboid.x.upperBound <= 50 &&
-            step.cuboid.y.lowerBound >= -50 && step.cuboid.y.upperBound <= 50 &&
-            step.cuboid.z.lowerBound >= -50 && step.cuboid.z.upperBound <= 50
+    static func rebootReactorOptimized(steps: [RebootStep]) -> Int {
+        var processedSteps: [RebootStep] = []
+        
+        for step in steps {
+            if step.state { // on cuboid
+                let intersectingSteps = processedSteps.compactMap { existingStep -> RebootStep? in
+                    // If the steps do not overlap, we don't need to do anything.
+                    guard let intersection = intersection(
+                        between: existingStep.cuboid,
+                        and: step.cuboid
+                    ) else { return nil } // no overlap
+                    
+                    if existingStep.state {
+                        // if the intersection is with an existing on step, we should
+                        // add an off intersection to mirror it so we don't double-count the ons.
+                        return (state: false, cuboid: intersection)
+                    } else {
+                        // if the intersection is with an existing off step, we should
+                        // add an on intersection to mirror it so we don't double-count the offs.
+                        return (state: true, cuboid: intersection)
+                    }
+                }
+                processedSteps.append(step)
+                processedSteps.append(contentsOf: intersectingSteps)
+                
+            } else { // off cuboid
+                // We don't need to append the entire off step to the list
+                let intersectingSteps = processedSteps.compactMap { existingStep -> RebootStep? in
+                    // If the steps do not overlap, we don't need to do anything.
+                    guard let intersection = intersection(
+                        between: existingStep.cuboid,
+                        and: step.cuboid
+                    ) else { return nil } // no overlap
+                    
+                    if existingStep.state {
+                        // If the intersection is on, turn it off.
+                        return (state: false, cuboid: intersection)
+                    } else {
+                        // if the intersection is with an existing off intersection, we should
+                        // add an on intersection to mirror it so we don't double-count the offs.
+                        return (state: true, cuboid: intersection)
+                    }
+                }
+                processedSteps.append(contentsOf: intersectingSteps)
+            }
         }
+        
+        // Now we can simply calculate the volume of on cuboids minus off cuboids
+        return calculateOnCubes(steps: processedSteps)
+    }
+    
+    static let initializationZone: Cuboid = (x: -50...50, y: -50...50, z: -50...50)
+    
+    static func filterInitializationSteps(_ allSteps: [RebootStep]) -> [RebootStep] {
+        allSteps.filter(isInitializationStep)
+    }
+
+    static func isInitializationStep(_ step: RebootStep) -> Bool {
+        guard let intersection = intersection(between: initializationZone, and: step.cuboid)
+        else { return false } // is not contained within the zone at all
+        
+        // If the intersection matches the original cuboid, it must be fully contained.
+        return (
+            intersection.x == step.cuboid.x &&
+            intersection.y == step.cuboid.y &&
+            intersection.z == step.cuboid.z
+        )
+    }
+    
+    static func intersection(between first: Cuboid, and second: Cuboid) -> Cuboid? {
+        guard
+            let x = calculateOverlap(first: first.x, second: second.x),
+            let y = calculateOverlap(first: first.y, second: second.y),
+            let z = calculateOverlap(first: first.z, second: second.z)
+        else { return nil }
+        
+        return (x: x, y: y, z: z)
+    }
+    
+    static func calculateOnCubes(steps: [RebootStep]) -> Int {
+        return steps.reduce(0) { sum, step in
+            if step.state {
+                return sum + cuboidVolume(step.cuboid)
+            } else {
+                return sum - cuboidVolume(step.cuboid)
+            }
+        }
+    }
+    
+    static func cuboidVolume(_ cuboid: Cuboid) -> Int {
+        cuboid.x.count * cuboid.y.count * cuboid.z.count
+    }
+    
+    private static func calculateOverlap(
+        first: ClosedRange<Int>,
+        second: ClosedRange<Int>
+    ) -> ClosedRange<Int>? {
+        guard first.overlaps(second) else { return nil }
+        
+        if second.lowerBound <= first.upperBound && second.lowerBound >= first.lowerBound && second.upperBound > first.upperBound {
+            // second lower bound overlaps with first upper bound
+            return (second.lowerBound...first.upperBound)
+        }
+        if second.upperBound >= first.lowerBound && second.upperBound <= first.upperBound && second.lowerBound < first.lowerBound {
+            // second upperbound overlaps with first lower bound
+            return (first.lowerBound...second.upperBound)
+        }
+        if first.lowerBound >= second.lowerBound && first.upperBound <= second.upperBound {
+            // first is contained within second
+            return first
+        }
+        if second.lowerBound >= first.lowerBound && second.upperBound <= first.upperBound {
+            // second is contained within first
+            return second
+        }
+        fatalError("Unexpected overlap detected between \(first) and \(second).")
     }
     
     // MARK: - Solutions
@@ -80,7 +190,18 @@ enum Day22 {
     static let partOne = pipe(
         parseInput,
         filterInitializationSteps,
-        initializeReactor,
+        rebootReactor,
         countTurnedOn
+    )
+    
+    static let partOneOptimised = pipe(
+        parseInput,
+        filterInitializationSteps,
+        rebootReactorOptimized
+    )
+    
+    static let partTwo = pipe(
+        parseInput,
+        rebootReactorOptimized
     )
 }
