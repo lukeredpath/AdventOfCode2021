@@ -71,47 +71,29 @@ enum Day22 {
         var processedSteps: [RebootStep] = []
         
         for step in steps {
-            if step.state { // on cuboid
-                let intersectingSteps = processedSteps.compactMap { existingStep -> RebootStep? in
-                    // If the steps do not overlap, we don't need to do anything.
-                    guard let intersection = intersection(
-                        between: existingStep.cuboid,
-                        and: step.cuboid
-                    ) else { return nil } // no overlap
-                    
-                    if existingStep.state {
-                        // if the intersection is with an existing on step, we should
-                        // add an off intersection to mirror it so we don't double-count the ons.
-                        return (state: false, cuboid: intersection)
-                    } else {
-                        // if the intersection is with an existing off step, we should
-                        // add an on intersection to mirror it so we don't double-count the offs.
-                        return (state: true, cuboid: intersection)
-                    }
-                }
-                processedSteps.append(step)
-                processedSteps.append(contentsOf: intersectingSteps)
+            let intersectingSteps = processedSteps.compactMap { existingStep -> RebootStep? in
+                // If the steps do not overlap, we don't need to do anything.
+                guard let intersection = intersection(
+                    between: existingStep.cuboid,
+                    and: step.cuboid
+                ) else { return nil } // no overlap
                 
-            } else { // off cuboid
-                // We don't need to append the entire off step to the list
-                let intersectingSteps = processedSteps.compactMap { existingStep -> RebootStep? in
-                    // If the steps do not overlap, we don't need to do anything.
-                    guard let intersection = intersection(
-                        between: existingStep.cuboid,
-                        and: step.cuboid
-                    ) else { return nil } // no overlap
-                    
-                    if existingStep.state {
-                        // If the intersection is on, turn it off.
-                        return (state: false, cuboid: intersection)
-                    } else {
-                        // if the intersection is with an existing off intersection, we should
-                        // add an on intersection to mirror it so we don't double-count the offs.
-                        return (state: true, cuboid: intersection)
-                    }
+                if existingStep.state {
+                    // if the intersection is with an existing on step, we should
+                    // add an off intersection to mirror it so we don't double-count the ons.
+                    return (state: false, cuboid: intersection)
+                } else {
+                    // if the intersection is with an existing off step, we should
+                    // add an on intersection to mirror it so we don't double-count the offs.
+                    return (state: true, cuboid: intersection)
                 }
-                processedSteps.append(contentsOf: intersectingSteps)
             }
+            
+            if step.state {
+                processedSteps.append(step)
+            }
+            
+            processedSteps.append(contentsOf: intersectingSteps)
         }
         
         // Now we can simply calculate the volume of on cuboids minus off cuboids
